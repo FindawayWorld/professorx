@@ -1,63 +1,75 @@
 package com.findaway.audioengine.sample.login;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import com.google.gson.Gson;
+
+import com.findaway.audioengine.sample.AudioEngineSession;
+import com.findaway.audioengine.sample.AuthenticationService;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.logging.HttpLoggingInterceptor;
+
+import retrofit.Callback;
+import retrofit.GsonConverterFactory;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by kkovach on 12/28/15.
  */
-public class LoginInteractorImpl implements LoginInteractor {
+public class LoginInteractorImpl implements LoginInteractor, Callback<AudioEngineSession> {
 
-    private ScheduledExecutorService mScheduledExecutorService;
-
-    private MockLogin mMockLogin;
+    private AuthenticationService mAuthenticationService;
+    private static final String LIBRARY = "library";
+    private static final String RETAIL = "retail";
+    private static final String LIBRARY_ACCOUNT = "4444";
+    private static final String RETAIL_ACCOUNT = "kevretail";
+    private boolean mIsLibrary;
+    private AudioEngineSession mSession;
+    private LoginListener mLoginListener;
 
     public LoginInteractorImpl() {
 
-        mScheduledExecutorService = Executors.newScheduledThreadPool(1);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient okHttpClient = new OkHttpClient();
+        okHttpClient.interceptors().add(interceptor);
+
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://sampleauth.findawayworld.com/prod/").client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(new Gson())).build();
+        mAuthenticationService = retrofit.create(AuthenticationService.class);
+
+        mIsLibrary = false;
     }
 
     @Override
-    public void login(final String username, final String password, final LoginListener listener) {
+    public void login(final String consumer, final String password, final LoginListener listener) {
 
-        mMockLogin = new MockLogin(username, password, listener);
-        System.out.println("Scheduling mock login for 15 seconds...");
-        mScheduledExecutorService.schedule(mMockLogin, 15, TimeUnit.SECONDS);
+        mLoginListener = listener;
+
+        mAuthenticationService.getSession(mIsLibrary ? LIBRARY : RETAIL, mIsLibrary ? LIBRARY_ACCOUNT : RETAIL_ACCOUNT, consumer).enqueue(this);
     }
 
-    private class MockLogin implements Runnable {
+    @Override
+    public void accountType(boolean library) {
 
-        private final String mUsername, mPassword;
-        private final LoginListener mListener;
+        mIsLibrary = library;
+    }
 
-        MockLogin(String username, String password, LoginListener listener) {
+    @Override
+    public void onResponse(Response<AudioEngineSession> loginResponse, Retrofit retrofit) {
 
-            mUsername = username;
-            mPassword = password;
-            mListener = listener;
+        if (loginResponse.isSuccess()) {
+
+            mLoginListener.success(loginResponse.body());
+
+        } else {
+
+            mLoginListener.error(loginResponse.code(), loginResponse.message());
         }
+    }
 
-        @Override
-        public void run() {
+    @Override
+    public void onFailure(Throwable t) {
 
-            System.out.println("Running mock login...");
-
-            boolean error = false;
-            if (mUsername == null || mUsername.length() == 0) {
-                System.out.println("Username error!");
-                mListener.usernameError();
-                error = true;
-            }
-            if (mPassword == null || mPassword.length() == 0) {
-                System.out.println("Password error!");
-                mListener.passwordError();
-                error = true;
-            }
-            if (!error) {
-                System.out.println("Success!");
-                mListener.success();
-            }
-        }
+        mLoginListener.error(500, t.getMessage());
     }
 }

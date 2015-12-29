@@ -11,16 +11,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
+import butterknife.OnClick;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoginView, View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements LoginView {
 
     private static final String TAG = "LoginActivity";
 
@@ -32,8 +33,6 @@ public class LoginActivity extends AppCompatActivity implements LoginView, View.
     AutoCompleteTextView username;
     @Bind(R.id.password)
     EditText password;
-    @Bind(R.id.email_sign_in_button)
-    Button mLoginButton;
     private LoginPresenter presenter;
 
     @Override
@@ -44,8 +43,6 @@ public class LoginActivity extends AppCompatActivity implements LoginView, View.
 
         ButterKnife.bind(this);
 
-        mLoginButton.setOnClickListener(this);
-
         presenter = new LoginPresenterImpl(this);
     }
 
@@ -54,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView, View.
 
         Log.i(TAG, "Show progress? " + show);
 
-        runOnUiThread(new Runnable() {
+        mLoginFormView.post(new Runnable() {
             @Override
             public void run() {
 
@@ -84,7 +81,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView, View.
     @Override
     public void setUsernameError() {
 
-        runOnUiThread(new Runnable() {
+        username.post(new Runnable() {
             @Override
             public void run() {
 
@@ -96,7 +93,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView, View.
     @Override
     public void setPasswordError() {
 
-        runOnUiThread(new Runnable() {
+        password.post(new Runnable() {
             @Override
             public void run() {
 
@@ -114,12 +111,18 @@ public class LoginActivity extends AppCompatActivity implements LoginView, View.
         finish();
     }
 
-    @Override
-    public void onClick(View v) {
+    @OnClick(R.id.email_sign_in_button)
+    public void login() {
 
         Log.i(TAG, "Logging in...");
 
         presenter.validateCredentials(username.getText().toString(), password.getText().toString());
+    }
+
+    @OnCheckedChanged(R.id.account_type)
+    public void setAccountType(boolean library) {
+
+        presenter.accountType(library);
     }
 }
 

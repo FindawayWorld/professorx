@@ -6,4 +6,6 @@ package com.findaway.audioengine.sample.login;
 public interface LoginPresenter {
 
     public void validateCredentials(String username, String password);
+
+    public void accountType(boolean library);
 }

@@ -1,5 +1,7 @@
 package com.findaway.audioengine.sample.login;
 
+import com.findaway.audioengine.sample.AudioEngineSession;
+
 /**
  * Created by kkovach on 12/28/15.
  */
@@ -22,6 +24,12 @@ public class LoginPresenterImpl implements LoginPresenter, LoginListener {
     }
 
     @Override
+    public void accountType(boolean library) {
+
+        loginInteractor.accountType(library);
+    }
+
+    @Override
     public void usernameError() {
 
         loginView.setUsernameError();
@@ -36,12 +44,18 @@ public class LoginPresenterImpl implements LoginPresenter, LoginListener {
     }
 
     @Override
-    public void success() {
+    public void success(AudioEngineSession audioEngineSession) {
 
-        System.out.println("Presenting success!");
+        System.out.println("Got key " + audioEngineSession.sessionKey + ". Presenting success!");
         System.out.println("Hiding progress...");
         loginView.showProgress(false);
         System.out.println("Navigating to home...");
         loginView.navigateToHome();
+    }
+
+    @Override
+    public void error(Integer code, String message) {
+
+        System.out.println("Login error: " + code + " - " + message);
     }
 }
