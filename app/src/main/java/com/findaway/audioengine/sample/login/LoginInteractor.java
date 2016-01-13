@@ -6,6 +6,4 @@ package com.findaway.audioengine.sample.login;
 public interface LoginInteractor {
 
     public void login(String username, String password, LoginListener listener);
-
-    public void accountType(boolean library);
 }

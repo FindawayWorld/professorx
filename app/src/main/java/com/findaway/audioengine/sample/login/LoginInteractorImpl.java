@@ -3,7 +3,6 @@ package com.findaway.audioengine.sample.login;
 import com.google.gson.Gson;
 
 import com.findaway.audioengine.sample.AudioEngineSession;
-import com.findaway.audioengine.sample.AuthenticationService;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
@@ -17,7 +16,7 @@ import retrofit.Retrofit;
  */
 public class LoginInteractorImpl implements LoginInteractor, Callback<AudioEngineSession> {
 
-    private AuthenticationService mAuthenticationService;
+    private LoginService mLoginService;
     private static final String LIBRARY = "library";
     private static final String RETAIL = "retail";
     private static final String LIBRARY_ACCOUNT = "4444";
@@ -33,25 +32,20 @@ public class LoginInteractorImpl implements LoginInteractor, Callback<AudioEngin
         OkHttpClient okHttpClient = new OkHttpClient();
         okHttpClient.interceptors().add(interceptor);
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://sampleauth.findawayworld.com/prod/").client(okHttpClient)
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://172.29.96.209:8080/myapp/").client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(new Gson())).build();
-        mAuthenticationService = retrofit.create(AuthenticationService.class);
-
-        mIsLibrary = false;
+        mLoginService = retrofit.create(LoginService.class);
     }
 
     @Override
-    public void login(final String consumer, final String password, final LoginListener listener) {
+    public void login(final String username, final String password, final LoginListener listener) {
 
         mLoginListener = listener;
 
-        mAuthenticationService.getSession(mIsLibrary ? LIBRARY : RETAIL, mIsLibrary ? LIBRARY_ACCOUNT : RETAIL_ACCOUNT, consumer).enqueue(this);
-    }
+        // Authenticate your user to your system with username and password
+        LoginRequest loginRequest = new LoginRequest(username, password);
 
-    @Override
-    public void accountType(boolean library) {
-
-        mIsLibrary = library;
+        mLoginService.login(loginRequest).enqueue(this);
     }
 
     @Override

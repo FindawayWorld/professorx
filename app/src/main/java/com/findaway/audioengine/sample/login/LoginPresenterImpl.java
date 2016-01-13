@@ -17,16 +17,10 @@ public class LoginPresenterImpl implements LoginPresenter, LoginListener {
     }
 
     @Override
-    public void validateCredentials(String username, String password) {
+    public void login(String username, String password) {
 
         loginView.showProgress(true);
         loginInteractor.login(username, password, this);
-    }
-
-    @Override
-    public void accountType(boolean library) {
-
-        loginInteractor.accountType(library);
     }
 
     @Override

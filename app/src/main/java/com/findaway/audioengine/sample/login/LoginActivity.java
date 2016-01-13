@@ -15,7 +15,6 @@ import android.widget.EditText;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 /**
@@ -116,13 +115,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
         Log.i(TAG, "Logging in...");
 
-        presenter.validateCredentials(username.getText().toString(), password.getText().toString());
-    }
-
-    @OnCheckedChanged(R.id.account_type)
-    public void setAccountType(boolean library) {
-
-        presenter.accountType(library);
+        presenter.login(username.getText().toString(), password.getText().toString());
     }
 }
 
