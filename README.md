@@ -19,7 +19,25 @@ Depending on if you're creating an application from scratch or adding audio book
 
 For the purposes of this tutorial we will be creating a RESTful web service using Java [Jersey] (https://jersey.java.net/) & [Grizzly] (https://grizzly.java.net/). There are many, many ways this can be done and we will not go into detail on that here. It is assumed that you are already familiar with these technologies or are working with others who are. This tutorial is based off an [example created by Oracle] (http://www.oracle.com/webfolder/technetwork/tutorials/obe/java/griz_jersey_intro/Grizzly-Jersey-Intro.html).
 
-Create a Login class that will be responsible for taking in a LoginRequest, validating the username and password, and returning a HTTP 200 or 401.
+#### Login Request
+Our login service will accept a JSON formatted login request and validate the username and password that make up that request. First, let's create that LoginRequest class.
+
+``` Java
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class LoginRequest {
+
+    @JsonProperty
+    String username;
+    @JsonProperty
+    String password;
+}
+```
+
+Our web service will accept HTTP POST requests with a JSON body and translate that request into this object. In our example all of this is the responsibility of Jersey & Grizzly and we will not go over the details here. It is however important to understand that this object represents the login request you'll on behalf of your user who's logging into your application.
+
+#### Login
+Next, we create a Login class that will be responsible for taking in a the LoginRequest above, validating the username and password, and returning a HTTP 200 or 401. The annotations in this class are part of JAX-RS specification. Again, we are not going into detail about ther here. Just know that they help Jersey & Grizzly route and handle the incoming login request.
 
 ``` Java
 // Relative path (endpoint) at which our login service resides
@@ -31,7 +49,7 @@ public class Login {
      * @return Response - response object indicating this GET method is not allowed
      */
     @GET
-    public Response unimplemented() {
+    public Response notAllowed() {
 
         return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
     }
@@ -50,10 +68,12 @@ public class Login {
 
         if (authenticate(loginRequest)) {
 
+            // If it is a valid username and password we return an HTTP 200
             return Response.status(Response.Status.OK).entity(audioEngineSession).build();
 
         } else {
 
+            // If the username and password fail validation we return an HTTP 401
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
@@ -65,6 +85,8 @@ public class Login {
      */
     private boolean authenticate(LoginRequest loginRequest) {
 
+        // Simplistic validation of username and password
+	// This is where each partner would implement their specific user validation and return either true or false
         if (loginRequest.username.equals("foo") && loginRequest.password.equals("password"))
             return true;
 
@@ -72,4 +94,69 @@ public class Login {
     }
 }
 ```
+
+#### Audio Engine Session Request
+Now that we have our user logged in we're going to concentrate on creating an Audio Engine session for them. Let's create a class that will hold the session creation information for that request. That is a 'consumer_key' (the id of your system user) and a list of 'account_ids' that this session will be valid for.
+
+``` Java
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+
+public class AudioEngineSessionRequest {
+
+    @JsonProperty
+    public ArrayList<String> account_ids;
+    @JsonProperty
+    public String consumer_key;
+
+    public AudioEngineSessionRequest() {
+
+        account_ids = new ArrayList<String>();
+    }
+}
+```
+
+#### Audio Engine Session
+We also need a class that will hold the session created and returned by Audio Engine.
+
+``` Java
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
+
+
+public class AudioEngineSession {
+
+    @JsonProperty
+    public ArrayList<String> restrictions;
+    @JsonProperty
+    public String namespace;
+    @JsonProperty
+    public String consumer_key;
+    @JsonProperty
+    public String session_key;
+    @JsonProperty
+    public ArrayList<String> account_ids;
+}
+```
+
+#### Accessing the Audio Engine API
+Now that we have our session request and session objects we need to actualy make the request. For this we will be utilizing a library called [Retrofit] (http://square.github.io/retrofit/). Retrofit makes it very, very easy to consume a REST API over HTTP. You just create an interface for your URIs and Retrofit will generate the classes necessary to access them. Let's go ahead and create that interface now.
+
+``` Java
+import retrofit.Call;
+import retrofit.http.Body;
+import retrofit.http.Header;
+import retrofit.http.POST;
+
+public interface AudioEngineSessionService {
+
+    @POST("sessions")
+    Call<AudioEngineSession> getSession(@Header("Api-Key") String apiKey, @Body AudioEngineSessionRequest audioEngineSessionRequest);
+}
+```
+
+In our interface you can see where we supply the AudioEngineSessionRequest and AudioEngineSession classes we created above. The URI for our session resource from the Audio Engine API is located at "sessions". You can see that indicated in the @POST annotation on the getSession() method. Finally, a call to get a session requires your Audio Engine API key in a header which should be kept secret and not included in your code. We'll see later where we set this up.
+
+
 

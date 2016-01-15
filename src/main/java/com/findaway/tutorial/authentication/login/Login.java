@@ -3,10 +3,9 @@ package com.findaway.tutorial.authentication.login;
 import com.findaway.tutorial.authentication.audioengine.AudioEngineSession;
 import com.findaway.tutorial.authentication.audioengine.AudioEngineSessionRequest;
 import com.findaway.tutorial.authentication.audioengine.AudioEngineSessionService;
-import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
-import retrofit.GsonConverterFactory;
+import retrofit.JacksonConverterFactory;
 import retrofit.Retrofit;
 
 import javax.ws.rs.*;
@@ -26,7 +25,7 @@ public class Login {
      * @return Response - response object indicating this GET method is not allowed
      */
     @GET
-    public Response unimplemented() {
+    public Response notAllowed() {
 
         return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
     }
@@ -58,7 +57,7 @@ public class Login {
 
         } else {
 
-            return Response.status(Response.Status.FORBIDDEN).build();
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         }
     }
 
@@ -83,7 +82,7 @@ public class Login {
         okHttpClient.interceptors().add(interceptor);
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api-test.findawayworld.com/v3/sessions").client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create(new Gson())).build();
+                .addConverterFactory(JacksonConverterFactory.create()).build();
 
         AudioEngineSessionService audioEngineSessionService = retrofit.create(AudioEngineSessionService.class);
 
