@@ -1,9 +1,9 @@
 package com.findaway.audioengine.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import com.findaway.audioengine.exceptions.ChapterNotFoundException;
 
+import java.lang.Long;
+import java.lang.String;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +12,6 @@ public class Content {
 
     //Content Attributes
     public static final String ID_ATTR = "id";
-    public static final String CONTENT_ID_ATTR = "contentId";
     public static final String TITLE_ATTR = "title";
     public static final String SUBTITLE_ATTR = "sub_title";
     public static final String CHAPTERS_ATTR = "chapters";
@@ -42,56 +41,41 @@ public class Content {
     public static final String BISAC3_ATTR = "BISAC3";
     public static final String METADATA_SIG_ATTR = "metadata_sig";
 
-    @SerializedName(ID_ATTR)
-    public String contentId;
+    public String id;
     public String title;
-    @SerializedName(SUBTITLE_ATTR)
-    public String subTitle;
-    @SerializedName(BISAC1_ATTR)
-    public String bisac1;
-    @SerializedName(BISAC2_ATTR)
-    public String bisac2;
-    @SerializedName(BISAC3_ATTR)
-    public String bisac3;
+    public String sub_title;
     public List<Chapter> chapters;
     public String description;
     public String abridgement;
     public List<String> author;
-    @SerializedName(COVER_URL_ATTR)
-    public String coverUrl;
-    @SerializedName(SAMPLE_URL_ATTR)
-    public String sampleUrl;
-    @SerializedName(SIZE_ATTR)
-    public Long size;
-    public List<String> awards;
+    public String cover_url;
+    public String sample_url;
+    public Long actual_size;
     public String publisher;
     public String runtime;
     public List<String> narrator;
     public String genre;
-    @SerializedName(SECONDARY_GENRE_ATTR)
-    public List<String> secondaryGenre;
+    public List<String> genre_list;
     public String copyright;
     public List<String> series;
-    @SerializedName(GRADE_LEVEL_ATTR)
-    public String gradeLevel;
-    @SerializedName(STREET_DATE_ATTR)
-    public Date streetDate;
+    public String grade_level;
+    public Date street_date;
     public String language;
-    @SerializedName(TIMES_BEST_SELLER_ATTR)
-    public Date timesBestSellerDate;
-    @SerializedName(COMMON_CORE_ATTR)
-    public boolean commonCore;
+    public List<String> awards;
+    public Date times_bestseller_date;
+    public boolean common_core;
     public boolean chapterized;
-    @SerializedName(TITLE_ACQUISITION_STASTUS_ATTR)
-    public String titleAcquisitionStastus;
-    @SerializedName(METADATA_SIG_ATTR)
-    public String metadataSignature;
+    public String title_acquisition_status;
+    public String bisac1;
+    public String bisac2;
+    public String bisac3;
+    public String metadata_sig;
 
     public Content() {
         author = new ArrayList<String>();
         narrator = new ArrayList<String>();
         chapters = new ArrayList<Chapter>();
-        secondaryGenre = new ArrayList<String>();
+        secondary_genre = new ArrayList<String>();
         series = new ArrayList<String>();
         awards = new ArrayList<String>();
         size = (long) 0;
@@ -104,7 +88,7 @@ public class Content {
         author = new ArrayList<String>();
         narrator = new ArrayList<String>();
         chapters = new ArrayList<Chapter>();
-        secondaryGenre = new ArrayList<String>();
+        secondary_genre = new ArrayList<String>();
         series = new ArrayList<String>();
         awards = new ArrayList<String>();
         size = (long) 0;
