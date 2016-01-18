@@ -102,7 +102,7 @@ part_number         - (number) Zero if not divided into parts
 
 chapter_number      - (number) Zero if "Introduction"
 
-####How to get chapter object
+###How to get chapter object
 To get a chapter object a call can be made to the android api.
 
 ####GET /v3/audiobooks/{id}
