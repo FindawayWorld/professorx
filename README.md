@@ -86,7 +86,7 @@ public class Login {
     private boolean authenticate(LoginRequest loginRequest) {
 
         // Simplistic validation of username and password
-	// This is where each partner would implement their specific user validation and return either true or false
+	// This is where each partner would implement their specific user authentication and return either true or false
         if (loginRequest.username.equals("foo") && loginRequest.password.equals("password"))
             return true;
 
@@ -140,7 +140,7 @@ public class AudioEngineSession {
 }
 ```
 
-#### Accessing the Audio Engine API
+#### Accessing the Audio Engine Session Service
 Now that we have our session request and session objects we need to actualy make the request. For this we will be utilizing a library called [Retrofit] (http://square.github.io/retrofit/). Retrofit makes it very, very easy to consume a REST API over HTTP. You just create an interface for your URIs and Retrofit will generate the classes necessary to access them. Let's go ahead and create that interface now.
 
 ``` Java
@@ -158,5 +158,171 @@ public interface AudioEngineSessionService {
 
 In our interface you can see where we supply the AudioEngineSessionRequest and AudioEngineSession classes we created above. The URI for our session resource from the Audio Engine API is located at "sessions". You can see that indicated in the @POST annotation on the getSession() method. Finally, a call to get a session requires your Audio Engine API key in a header which should be kept secret and not included in your code. We'll see later where we set this up.
 
+
+#### Putting it All Together
+We started out creating classes that allowed us to create, receive, and validate login requests from our Android app. Then, we created classes that allowed us to access the Audio Engine API and create a session for our Android app so that we can add audio book functionality to it. All that remains is putting this all together in something that is accessable to our Android application, so that it can send a LoginRequest and get back an AudioEngineSession.
+
+For that we are going to modify our Login class to include a call to our newly developed AudioEngineSessionService. Initially, it was taking in the LoginRequest and returning an HTTP 200 or 401 depending on the validation of the supplied username and password. Once the user is validated we can add an additional call to our AudioEngineSessionService and append the AudioEngineService to the 200 Response. Let's do that here.
+
+``` Java
+import com.findaway.tutorial.authentication.audioengine.AudioEngineSession;
+import com.findaway.tutorial.authentication.audioengine.AudioEngineSessionRequest;
+import com.findaway.tutorial.authentication.audioengine.AudioEngineSessionService;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.logging.HttpLoggingInterceptor;
+import retrofit.JacksonConverterFactory;
+import retrofit.Retrofit;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+
+// Relative path (endpoint) at which our login service resides
+@Path("login")
+public class Login {
+
+    /**
+     *
+     * @return Response - response object indicating this GET method is not allowed
+     */
+    @GET
+    public Response notAllowed() {
+
+        return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
+    }
+
+    /**
+     *
+     * @param loginRequest - The request for authentication containing the username and password
+     * @return response - The Response object indicating either OK or FORBIDDEN depending on whether or not the loginRequest was valid
+     */
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response login(LoginRequest loginRequest) {
+
+        AudioEngineSession audioEngineSession = null;
+
+        if (authenticate(loginRequest)) {
+
+            try {
+
+                audioEngineSession = getAudioEngineSession(loginRequest.username);
+
+            } catch (IOException e) {
+
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            }
+
+            return Response.status(Response.Status.OK).entity(audioEngineSession).build();
+
+        } else {
+
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+    }
+
+    /**
+     *
+     * @param loginRequest - The login request to validate
+     * @return
+     */
+    private boolean authenticate(LoginRequest loginRequest) {
+
+        if (loginRequest.username.equals("foo") && loginRequest.password.equals("password"))
+            return true;
+
+        return false;
+    }
+
+    /**
+     *
+     * @param username - The user (consumer) for whom we need to create an Audio Engine session
+     * @return An new Audio Engine session
+     * @throws IOException
+     */
+    private AudioEngineSession getAudioEngineSession(String username) throws IOException {
+
+        // This is where we configure Retrofit with the Audio Engine API information so that it can generate our
+        // service for us and allow us to access the API
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(AudioEngineSessionService.BASE_URL)
+                .addConverterFactory(JacksonConverterFactory.create()).build();
+
+        // Create that service here
+        AudioEngineSessionService audioEngineSessionService = retrofit.create(AudioEngineSessionService.class);
+
+        // Construct our session request
+        AudioEngineSessionRequest sessionRequest = new AudioEngineSessionRequest();
+        sessionRequest.account_ids = getAccounts(username);
+        sessionRequest.consumer_key = username;
+
+        try {
+
+            System.out.println("Using Audio Engine API Key: " + System.getenv("SECRET_AUDIO_ENGINE_API_KEY"));
+
+            // Make call to Audio Engine and return the AudioEngineSession object
+            return audioEngineSessionService.getSession(System.getenv("SECRET_AUDIO_ENGINE_API_KEY"), sessionRequest).execute().body();
+
+        } catch (IOException e) {
+
+            // Log and throw exception should we encounter one
+            System.out.println("Exception getting Audio Engine session: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * Get accounts associated with the supplied user
+     * @param username - Username for which we need to retrieve accounts.
+     * @return List of accounts for user
+     */
+    private ArrayList<String> getAccounts(String username) {
+
+        ArrayList<String> accounts = new ArrayList<>();
+
+        // This is simplified for the tutorial. Here each partner would use the supplied username to get the 
+        // proper account to which the user belonged
+        if(username.equals("foo"))
+            accounts.add("4444");
+
+        return accounts;
+    }
+}
+```
+
+#### Creating a Server for Application Access
+This class is specific to Jersey & Grizzly and is strictly for testing and the tutorial. This class will start a HTTP server and allow your application access all of the functionality we created above.
+
+``` Java
+public class LoginService {
+
+    // Base URI the Grizzly HTTP server will listen on
+    public String BASE_URI;
+
+    public HttpServer startServer() {
+
+        // IP address of the server for testing (Replace with your IP)
+        String ip = "192.168.0.100";
+
+        // This is the URL the application will use to access the login
+        BASE_URI = "http://" + ip + ":8080/myapp/";
+
+        System.out.println("LoginService starting at " + BASE_URI);
+
+        // Here we create a resource for Jersey that exposes our Login class
+        final ResourceConfig rc = new ResourceConfig().register(JacksonFeature.class).packages("com.findaway.tutorial.authentication");
+
+        // Grizzly http server exposing the Jersey application at BASE_URI
+        return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        LoginService loginService = new LoginService();
+        loginService.startServer();
+    }
+}
+```
 
 

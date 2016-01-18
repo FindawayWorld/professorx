@@ -3,8 +3,6 @@ package com.findaway.tutorial.authentication.login;
 import com.findaway.tutorial.authentication.audioengine.AudioEngineSession;
 import com.findaway.tutorial.authentication.audioengine.AudioEngineSessionRequest;
 import com.findaway.tutorial.authentication.audioengine.AudioEngineSessionService;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 import retrofit.JacksonConverterFactory;
 import retrofit.Retrofit;
 
@@ -12,6 +10,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by kkovach on 1/13/16.
@@ -74,32 +73,56 @@ public class Login {
         return false;
     }
 
+    /**
+     *
+     * @param username - The user (consumer) for whom we need to create an Audio Engine session
+     * @return An new Audio Engine session
+     * @throws IOException
+     */
     private AudioEngineSession getAudioEngineSession(String username) throws IOException {
 
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.interceptors().add(interceptor);
-
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api-test.findawayworld.com/v3/sessions").client(okHttpClient)
+        // This is where we configure Retrofit with the Audio Engine API information so that it can generate our
+        // service for us and allow us to access the API
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(AudioEngineSessionService.BASE_URL)
                 .addConverterFactory(JacksonConverterFactory.create()).build();
 
+        // Create that service here
         AudioEngineSessionService audioEngineSessionService = retrofit.create(AudioEngineSessionService.class);
 
+        // Construct our session request
         AudioEngineSessionRequest sessionRequest = new AudioEngineSessionRequest();
-        sessionRequest.account_ids.add("4444");
+        sessionRequest.account_ids = getAccounts(username);
         sessionRequest.consumer_key = username;
 
         try {
 
             System.out.println("Using Audio Engine API Key: " + System.getenv("SECRET_AUDIO_ENGINE_API_KEY"));
 
+            // Make call to Audio Engine and return the AudioEngineSession object
             return audioEngineSessionService.getSession(System.getenv("SECRET_AUDIO_ENGINE_API_KEY"), sessionRequest).execute().body();
 
         } catch (IOException e) {
 
+            // Log and throw exception should we encounter one
             System.out.println("Exception getting Audio Engine session: " + e.getMessage());
             throw e;
         }
+    }
+
+    /**
+     * Get accounts associated with the supplied user
+     * @param username - Username for which we need to retrieve accounts.
+     * @return List of accounts for user
+     */
+    private ArrayList<String> getAccounts(String username) {
+
+        ArrayList<String> accounts = new ArrayList<>();
+
+        // This is simplified for the tutorial. Here each partner would use the supplied username to get the
+        // proper account to which the user belonged
+        if(username.equals("foo"))
+            accounts.add("4444");
+
+        return accounts;
     }
 }

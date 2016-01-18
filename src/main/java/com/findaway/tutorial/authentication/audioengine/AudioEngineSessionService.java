@@ -10,6 +10,8 @@ import retrofit.http.POST;
  */
 public interface AudioEngineSessionService {
 
+    String BASE_URL = "https://api.findawayworld.com/v3/";
+
     @POST("sessions")
     Call<AudioEngineSession> getSession(@Header("Api-Key") String apiKey, @Body AudioEngineSessionRequest audioEngineSessionRequest);
 }
