@@ -226,8 +226,10 @@ To get the content object a call can be made to the android api. The returned JS
 required data to create your content objects. More information about using the api can be found in
 the developer portal here http://developer.audioengine.io/api/v3/patterns.
 
-####GET /v3/audiobooks
-    - Returns a JSON formatted document containing a list of audiobook objects as described above.
+| Endpoint | Description |
+| ---- | --------------- |
+| [GET /v3/audiobooks](http://developer.audioengine.io/api/v3/audiobooks) | Get content objects |
+
 (This will require an authorised session-key or your api-key in the HTTP header for any request)
 
 ##Chapter Object
@@ -276,7 +278,7 @@ the developer portal here http://developer.audioengine.io/api/v3/patterns.
 
 | Endpoint | Description |
 | ---- | --------------- |
-| [GET /v3/audiobooks/:id](http://developer.audioengine.io/api/v3/patterns) | Get chapter object for specific id |
+| [GET /v3/audiobooks/:id](http://developer.audioengine.io/api/v3/audiobooks) | Get chapter object for specific id |
 
 (This will require an authorised session-key or your api-key in the HTTP header for any request)
 
