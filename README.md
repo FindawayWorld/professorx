@@ -222,8 +222,9 @@ bisac3                      - (string) Alphanumeric subject code (3 of 3)
 metadata_sig                - (string) text signature that is updated when any of the above data changes
 
 ###How to get a content object
-To get the content object a call can be made to the android api. More information about using the 
-api can be found in the developer portal here http://developer.audioengine.io/api/v3/patterns.
+To get the content object a call can be made to the android api. The returned JSON will have the 
+required data to create your content objects. More information about using the api can be found in
+the developer portal here http://developer.audioengine.io/api/v3/patterns.
 
 ####GET /v3/audiobooks
     - Returns a JSON formatted document containing a list of audiobook objects as described above.
@@ -269,8 +270,9 @@ part_number         - (number) Zero if not divided into parts
 chapter_number      - (number) Zero if "Introduction"
 
 ###How to get chapter object
-To get a chapter object a call can be made to the android api. More information about using the 
-api can be found in the developer portal here http://developer.audioengine.io/api/v3/patterns.
+To get a chapter object a call can be made to the android api. The returned JSON will have the
+required data to create your chapter objects. More information about using the api can be found in
+the developer portal here http://developer.audioengine.io/api/v3/patterns.
 
 ####GET /v3/audiobooks/{id}
     - Returns JSON formatted document containing an audiobook object.
