@@ -276,7 +276,7 @@ the developer portal here http://developer.audioengine.io/api/v3/patterns.
 
 | Endpoint | Description |
 | ---- | --------------- |
-| [GET /v3/audiobooks/:id](/v3_resources/blocks.md#get-usersloginblocks) | Get chapter object for specific id |
+| [GET /v3/audiobooks/:id](http://developer.audioengine.io/api/v3/patterns) | Get chapter object for specific id |
 
 (This will require an authorised session-key or your api-key in the HTTP header for any request)
 
