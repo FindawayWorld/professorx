@@ -11,13 +11,151 @@ chapter objects it contains. The content object can be created with a content id
 
 getChapter(Integer partNumber, Integer chapterNumber) - Returns a specific chapter object.
 
+``` Java public Chapter getChapter(Integer partNumber, Integer chapterNumber) throws ChapterNotFoundException {
+
+        if (partNumber == null && chapterNumber == null) {
+
+            return getFirstChapter();
+
+        } else if (partNumber != null && chapterNumber == null) {
+
+            for (Chapter chapter : chapters) {
+
+                if (chapter.partNumber.equals(partNumber)) {
+
+                    chapter.contentId = contentId;
+                    return chapter;
+                }
+            }
+
+        } else if (partNumber == null) {
+
+            for (Chapter chapter : chapters) {
+
+                if (chapter.chapterNumber.equals(chapterNumber)) {
+
+                    chapter.contentId = contentId;
+                    return chapter;
+                }
+            }
+
+        } else {
+
+            for (Chapter chapter : chapters) {
+
+                if (chapter.partNumber.equals(partNumber) && chapter.chapterNumber.equals(chapterNumber)) {
+
+                    chapter.contentId = contentId;
+                    return chapter;
+                }
+            }
+        }
+
+        throw new ChapterNotFoundException("No chapter found for Part " + partNumber + ", Chapter " + chapterNumber + " in book " + contentId);
+    }
+```
+
 getFirstChapter() - Returns the first chapter object of the content.
+
+``` Java public Chapter getFirstChapter() {
+
+        Chapter chapter = chapters.get(0);
+        chapter.contentId = contentId;
+        return chapter;
+    }
+```
 
 getNextChapter(Integer partNumber, Integer chapterNumber) - Returns the next chapter object.
 
+``` Java public Chapter getNextChapter(Integer partNumber, Integer chapterNumber) throws ChapterNotFoundException {
+
+        Chapter nextChapter;
+        Chapter[] chapterArray = chapters.toArray(new Chapter[chapters.size()]);
+        int i = 0;
+
+        if (partNumber == null && chapterNumber == null) {
+
+            Chapter chapter = getFirstChapter();
+            return getNextChapter(chapter.partNumber, chapter.chapterNumber);
+
+        } else if (partNumber != null && chapterNumber == null) {
+
+            for (i = 0; i < chapterArray.length; i++) {
+
+                if (chapterArray[i].partNumber.equals(partNumber)) {
+
+                    if (i + 1 < chapterArray.length) {
+                        nextChapter = chapterArray[i + 1];
+                        nextChapter.contentId = contentId;
+                        return nextChapter;
+                    } else {
+                        throw new ChapterNotFoundException(
+                                "No next chapter found for Part " + partNumber + ", Chapter " + chapterNumber + " in book " + contentId);
+                    }
+                }
+            }
+
+        } else if (partNumber == null) {
+
+            for (i = 0; i < chapterArray.length; i++) {
+
+                if (chapterArray[i].chapterNumber.equals(chapterNumber)) {
+
+                    if (i + 1 < chapterArray.length) {
+                        nextChapter = chapterArray[i + 1];
+                        nextChapter.contentId = contentId;
+                        return nextChapter;
+                    } else {
+                        throw new ChapterNotFoundException(
+                                "No next chapter found for Part " + partNumber + ", Chapter " + chapterNumber + " in book " + contentId);
+                    }
+                }
+            }
+
+        } else {
+
+            for (i = 0; i < chapterArray.length; i++) {
+
+                if (chapterArray[i].partNumber.equals(partNumber) && chapterArray[i].chapterNumber.equals(chapterNumber)) {
+
+                    if (i + 1 < chapterArray.length) {
+                        nextChapter = chapterArray[i + 1];
+                        nextChapter.contentId = contentId;
+                        return nextChapter;
+                    } else {
+                        throw new ChapterNotFoundException(
+                                "No next chapter found for Part " + partNumber + ", Chapter " + chapterNumber + " in book " + contentId);
+                    }
+                }
+            }
+        }
+
+        throw new ChapterNotFoundException("No chapter found for Part " + partNumber + ", Chapter " + chapterNumber + " in book " + contentId);
+    }
+```
 hasChapters() - Returns the number of chapter objects for this content.
 
+``` Java public boolean hasChapters() {
+
+        return chapters != null && chapters.size() > 0;
+    }
+```
+
 hasNextChapter(Chapter chapter) - Returns weather or not there is a next chapter object.
+
+``` Java public boolean hasNextChapter(Chapter chapter) {
+
+        try {
+
+            getNextChapter(chapter.partNumber, chapter.chapterNumber);
+            return true;
+
+        } catch (ChapterNotFoundException cnfe) {
+
+            return false;
+        }
+    }
+```
 
 ###Properties
 id                          - (string) id of audiobook (5 digits)
@@ -79,7 +217,9 @@ bisac3                      - (string) Alphanumeric subject code (3 of 3)
 metadata_sig                - (string) text signature that is updated when any of the above data changes
 
 ###How to get a content object
-To get the content object a call can be made to the android api.
+To get the content object a call can be made to the android api. More information about using the 
+api can be found in the developer portal here http://developer.audioengine.io/api/v3/patterns.
+
 ####GET /v3/audiobooks
     - Returns a JSON formatted document containing a list of audiobook objects as described above.
 (This will require an authorised session-key or your api-key in the HTTP header for any request)
@@ -94,6 +234,26 @@ object. Chapter object can be created using id, part, and chapter, or without a 
 
 getFriendlyName() - Returns formatted part and chapter information.
 
+``` Java public String getFriendlyName() {
+                 String friendlyName;
+         
+                 if (partNumber == 0 && chapterNumber == 0) {
+         
+                     friendlyName = "Introduction";
+         
+                 } else if (partNumber == 0) {
+         
+                     friendlyName = "Chapter " + chapterNumber;
+         
+                 } else {
+         
+                     friendlyName = "Part " + partNumber + ", " + "Chapter " + chapterNumber;
+                 }
+         
+                 return friendlyName;
+             }
+```
+
 ###Properties
 
 duration            - (number) in seconds
@@ -103,7 +263,8 @@ part_number         - (number) Zero if not divided into parts
 chapter_number      - (number) Zero if "Introduction"
 
 ###How to get chapter object
-To get a chapter object a call can be made to the android api.
+To get a chapter object a call can be made to the android api. More information about using the 
+api can be found in the developer portal here http://developer.audioengine.io/api/v3/patterns.
 
 ####GET /v3/audiobooks/{id}
     - Returns JSON formatted document containing an audiobook object.
