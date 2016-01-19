@@ -274,7 +274,9 @@ To get a chapter object a call can be made to the android api. The returned JSON
 required data to create your chapter objects. More information about using the api can be found in
 the developer portal here http://developer.audioengine.io/api/v3/patterns.
 
-####GET /v3/audiobooks/{id}
-    - Returns JSON formatted document containing an audiobook object.
+| Endpoint | Description |
+| ---- | --------------- |
+| [GET /v3/audiobooks/:id](/v3_resources/blocks.md#get-usersloginblocks) | Get chapter object for specific id |
+
 (This will require an authorised session-key or your api-key in the HTTP header for any request)
 
