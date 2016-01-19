@@ -11,7 +11,8 @@ chapter objects it contains. The content object can be created with a content id
 
 getChapter(Integer partNumber, Integer chapterNumber) - Returns a specific chapter object.
 
-``` Java public Chapter getChapter(Integer partNumber, Integer chapterNumber) throws ChapterNotFoundException {
+``` Java 
+public Chapter getChapter(Integer partNumber, Integer chapterNumber) throws ChapterNotFoundException {
 
         if (partNumber == null && chapterNumber == null) {
 
@@ -57,7 +58,8 @@ getChapter(Integer partNumber, Integer chapterNumber) - Returns a specific chapt
 
 getFirstChapter() - Returns the first chapter object of the content.
 
-``` Java public Chapter getFirstChapter() {
+``` Java 
+public Chapter getFirstChapter() {
 
         Chapter chapter = chapters.get(0);
         chapter.contentId = contentId;
@@ -67,7 +69,8 @@ getFirstChapter() - Returns the first chapter object of the content.
 
 getNextChapter(Integer partNumber, Integer chapterNumber) - Returns the next chapter object.
 
-``` Java public Chapter getNextChapter(Integer partNumber, Integer chapterNumber) throws ChapterNotFoundException {
+``` Java 
+public Chapter getNextChapter(Integer partNumber, Integer chapterNumber) throws ChapterNotFoundException {
 
         Chapter nextChapter;
         Chapter[] chapterArray = chapters.toArray(new Chapter[chapters.size()]);
@@ -135,7 +138,8 @@ getNextChapter(Integer partNumber, Integer chapterNumber) - Returns the next cha
 ```
 hasChapters() - Returns the number of chapter objects for this content.
 
-``` Java public boolean hasChapters() {
+``` Java 
+public boolean hasChapters() {
 
         return chapters != null && chapters.size() > 0;
     }
@@ -143,7 +147,8 @@ hasChapters() - Returns the number of chapter objects for this content.
 
 hasNextChapter(Chapter chapter) - Returns weather or not there is a next chapter object.
 
-``` Java public boolean hasNextChapter(Chapter chapter) {
+``` Java 
+public boolean hasNextChapter(Chapter chapter) {
 
         try {
 
@@ -234,7 +239,8 @@ object. Chapter object can be created using id, part, and chapter, or without a 
 
 getFriendlyName() - Returns formatted part and chapter information.
 
-``` Java public String getFriendlyName() {
+``` Java
+ public String getFriendlyName() {
                  String friendlyName;
          
                  if (partNumber == 0 && chapterNumber == 0) {
