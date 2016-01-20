@@ -25,35 +25,35 @@ import java.util.List;
 
 public class Content {
 
-    public String id;  //this will be used as the identifier for the audiobook
-    public String title;
-    public String sub_title;
-    public List<Chapter> chapters;
-    public String description;
-    public String abridgement;
-    public List<String> author;
-    public String cover_url;
-    public String sample_url;
-    public Long actual_size;
-    public String publisher;
-    public String runtime;
-    public List<String> narrator;
-    public String genre;
-    public List<String> genre_list;
-    public String copyright;
-    public List<String> series;
-    public String grade_level;
-    public Date street_date;
-    public String language;
-    public List<String> awards;
-    public Date times_bestseller_date;
-    public boolean common_core;
-    public boolean chapterized;
-    public String title_acquisition_status;
-    public String bisac1;
-    public String bisac2;
-    public String bisac3;
-    public String metadata_sig;
+    public String id;  //this is used as the identifier for the audiobook
+    public String title; //the title of the audiobook
+    public String sub_title; //the subtitle of the audiobook which is optional 
+    public List<Chapter> chapters; //list of chapter data(seperate api call)
+    public String description; //a breif paragraph about the audiobook
+    public String abridgement; //"Abridged" or "Unabridged" 
+    public List<String> author; //a list of authors
+    public String cover_url; //the url where you can find the audiobook cover image
+    public String sample_url; //the url where you can find the sample audio
+    public Long actual_size; //size of the audiobook in bytes
+    public String publisher; //publisher of the audiobook
+    public String runtime; //runtime in HH:MM:SS format
+    public List<String> narrator; //a list of narrators
+    public String genre; //the audiobooks primary genre
+    public List<String> genre_list; //a list of other genres 
+    public String copyright; //copyright year if available, formatted YYYY 
+    public List<String> series; //list of series this book is a part of
+    public String grade_level; //text tag such as 'Young Adult'
+    public Date street_date; //release date in YYYY-MM-DD format
+    public String language; //multiple languages seperated by a slash
+    public List<String> awards; //list of awards
+    public Date times_bestseller_date; //bestseller date in YYYY-MM-DD format
+    public boolean common_core; //true or false
+    public boolean chapterized; //true or false
+    public String title_acquisition_status; //title status i.e. "Rights Secured"
+    public String bisac1; //alphanumberic subject code
+    public String bisac2; //alphanumberic subject code
+    public String bisac3; //alphanumberic subject code
+    public String metadata_sig; //text signature that is updated when any data changes 
 
 }
 ```
@@ -73,9 +73,9 @@ package com.findaway.audioengine.model;
 
 public class Chapter {
 
-    public Long duration;
-    public Integer part_number;
-    public Integer chapter_number;
+    public Long duration; //chapter duration in seconds
+    public Integer part_number; //the part number, 0 if audiobook not divided into parts
+    public Integer chapter_number; //The chapter number, 0 if introduction
 
 }
 ```
