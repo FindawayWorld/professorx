@@ -1,6 +1,6 @@
 #Tutorial 3 - Application Login and Audio Engine Sessions
 
-Now that you have a service setup to validate your users and return a session for you app, we will 
+Now that you have a service setup to validate your users and return a session for your app, we will 
 learn how to get and use that session in your app. You will start by designing a login screen that will 
 accept a users credentials. The credentials include username and password. When the user clicks the 
 login button the authentication will start. 
