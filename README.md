@@ -180,5 +180,21 @@ presenter and you will call the login method, passing in the users credentials f
     }
 ```
 
+When the login completes it recevies back a session key and kicks off the success method. The key is stored and the app moves past the 
+login screen. 
+
+``` Java
+@Override
+    public void success(AudioEngineSession audioEngineSession) {
+
+        System.out.println("Got key " + audioEngineSession.sessionKey + ". Presenting success!");
+        System.out.println("Hiding progress...");
+        loginView.showProgress(false);
+        System.out.println("Navigating to home...");
+        loginView.navigateToHome();
+    }
+```
+
+
 
 
