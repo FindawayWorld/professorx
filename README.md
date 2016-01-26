@@ -1,13 +1,13 @@
 #Tutorial 3 - Application Login and Audio Engine Sessions
 
 Now that you have a service setup to validate your users and return a session for your app, we will 
-learn how to get and use that session in your app. You will start by designing a login screen that will 
+learn how to get and store that session in your app. You will start by designing a login screen that will 
 accept a users credentials. The credentials include username and password. When the user clicks the 
 login button the authentication will start. 
 
 ###LoginActivity
 In your login activity, you will need to declare the LoginPresenter that is used in the login process.
-This is done at the top of the class. You will use this during the onCreate method.
+This is done at the top of the class. You will start using this during the onCreate method.
 
 ``` Java
 
