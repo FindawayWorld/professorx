@@ -35,9 +35,11 @@ assign it to the LoginPresenter.
     }
 ```
 
+###LoginPresenterImpl
 The LoginPresenterImpl object contains the methods used to login as well as handling the login process
-and errors that could occur during the process. The constructor of the LoginPresenterImpl creates a 
-new instance of the LoginInteractorImpl object.  
+and errors that could occur during the process. The main job of this presenter is to handle any actions
+or changes from the view and pass them to the interactor. The constructor of the LoginPresenterImpl 
+creates a new instance of the LoginInteractorImpl object.  
 
 ``` Java
 package com.findaway.audioengine.sample.login;
@@ -94,8 +96,10 @@ public class LoginPresenterImpl implements LoginPresenter, LoginListener {
 }
 ```
 
+###LoginInteractorImpl
 The LoginInteractorImpl object will handle making the calls to your authentication service. It will 
 get the response back from the service and pass that response back to the LoginPresenterImpl object.
+The main job of the interactor is to execute business logic and get the results back to the presenter.
 
 ``` Java
 package com.findaway.audioengine.sample.login;
@@ -166,9 +170,10 @@ public class LoginInteractorImpl implements LoginInteractor, Callback<AudioEngin
 }
 ```
 
+
 Now that you have a LoginPresenter created, you can use it to login. The LoginActivity contains a 
-method that will handle the user clicking the login button. This is where you will actually use your
-presenter and you will call the login method, passing in the users credentials from the form.
+method that will handle the user clicking the login button. This is where you will actually see your
+presenter in action and you will call the login method, passing in the users credentials from the form.
  
 ``` Java
 @OnClick(R.id.email_sign_in_button)
@@ -180,8 +185,10 @@ presenter and you will call the login method, passing in the users credentials f
     }
 ```
 
-When the login completes it recevies back a session key and kicks off the success method. The key is stored and the app moves past the 
-login screen. 
+The presenter passes the login information from the view to the interactor so that it can login and 
+authenticate. When the interactor completes, it recevies back a session key and passes it back to 
+the presenter. The presenter updates the views and kicks off the success method. The key is
+stored and the app moves past the login screen by kicking off navigateToHome which starts the main activity.
 
 ``` Java
 @Override
@@ -194,7 +201,3 @@ login screen.
         loginView.navigateToHome();
     }
 ```
-
-
-
-
