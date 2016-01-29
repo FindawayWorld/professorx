@@ -5,5 +5,5 @@ package com.findaway.audioengine.sample.audiobooks;
  */
 public interface AudiobookInteractor {
 
-    public void getContentList();
+    public void getContentList(String accountId);
 }

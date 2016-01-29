@@ -33,7 +33,6 @@ public class AudiobookInteractorImpl implements  AudiobookInteractor, Callback<L
 
     @Override
     public void onResponse(Response<List<Content>> response, Retrofit retrofit) {
-
         mAudiobookListener.success(response.body());
     }
 
@@ -43,8 +42,7 @@ public class AudiobookInteractorImpl implements  AudiobookInteractor, Callback<L
     }
 
     @Override
-    public void getContentList() {
-
-        mAudiobookService.getContentList().enqueue(this);
+    public void getContentList(String accountId) {
+        mAudiobookService.getContentList(accountId).enqueue(this);
     }
 }
