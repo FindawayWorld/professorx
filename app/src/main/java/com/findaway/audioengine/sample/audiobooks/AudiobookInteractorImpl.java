@@ -14,7 +14,7 @@ import retrofit.Retrofit;
 /**
  * Created by agofman on 1/28/16.
  */
-public class AudiobookInteractorImpl implements  AudiobookInteractor, Callback<List<Content>> {
+public class AudiobookInteractorImpl implements AudiobookInteractor, Callback<List<Content>> {
 
     private AudiobookService mAudiobookService;
     private AudiobookListener mAudiobookListener;
@@ -42,7 +42,8 @@ public class AudiobookInteractorImpl implements  AudiobookInteractor, Callback<L
     }
 
     @Override
-    public void getContentList(String accountId) {
-        mAudiobookService.getContentList(accountId).enqueue(this);
+    public void getContentList(String sessionId, String accountId, AudiobookListener audiobookListener) {
+        mAudiobookListener = audiobookListener;
+        mAudiobookService.getContentList(sessionId, accountId).enqueue(this);
     }
 }

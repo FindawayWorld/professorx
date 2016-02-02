@@ -4,6 +4,7 @@ import java.util.List;
 
 import retrofit.Call;
 import retrofit.http.GET;
+import retrofit.http.Header;
 import retrofit.http.Path;
 
 /**
@@ -11,6 +12,7 @@ import retrofit.http.Path;
  */
 public interface AudiobookService {
 
-    @GET("accounts/{id}/audiobook")
-    Call<List<Content>> getContentList(@Path("id") String accountId);
+    @GET("accounts/{id}/audiobooks")
+    Call<List<Content>> getContentList(@Header("Session-Key") String sessionId, @Path("id") String accountId);
+
 }

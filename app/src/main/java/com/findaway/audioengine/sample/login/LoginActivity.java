@@ -1,17 +1,24 @@
 package com.findaway.audioengine.sample.login;
 
+import com.findaway.audioengine.sample.AudioEngineSession;
 import com.findaway.audioengine.sample.MainActivity;
 import com.findaway.audioengine.sample.R;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,6 +30,9 @@ import butterknife.OnClick;
 public class LoginActivity extends AppCompatActivity implements LoginView {
 
     private static final String TAG = "LoginActivity";
+    public static final String AUDIO_ENGINE_SESSION_KEY = "AUDIO_ENGINE_SESSION_KEY";
+    public static final String AUDIO_ENGINE_CONSUMER_KEY = "AUDIO_ENGINE_CONSUMER_KEY";
+    public static final String AUDIO_ENGINE_ACCOUNT_IDS = "AUDIO_ENGINE_ACCOUNT_IDS";
 
     @Bind(R.id.login_form)
     View mLoginFormView;
@@ -33,6 +43,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     @Bind(R.id.password)
     EditText password;
     private LoginPresenter presenter;
+    private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +51,12 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         ButterKnife.bind(this);
 
         presenter = new LoginPresenterImpl(this);
+
     }
 
     @Override
@@ -102,10 +116,12 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     }
 
     @Override
-    public void navigateToHome() {
+    public void navigateToHome(AudioEngineSession audioEngineSession) {
 
         Log.i(TAG, "Navigating to MainActivity...");
-
+        mSharedPreferences.edit().putString(AUDIO_ENGINE_SESSION_KEY, audioEngineSession.sessionKey).commit();
+        mSharedPreferences.edit().putString(AUDIO_ENGINE_ACCOUNT_IDS, audioEngineSession.account_ids.get(0)).commit();
+        mSharedPreferences.edit().putString(AUDIO_ENGINE_CONSUMER_KEY, audioEngineSession.consumer_key).commit();
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

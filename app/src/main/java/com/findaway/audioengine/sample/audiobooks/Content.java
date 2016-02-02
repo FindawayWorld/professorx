@@ -18,7 +18,7 @@ public class Content {
     public List<String> author; //a list of authors
     public String cover_url; //the url where you can find the audiobook cover image
     public String sample_url; //the url where you can find the sample audio
-    public Long actual_size; //size of the audiobook in bytes
+    public String actual_size; //size of the audiobook in bytes
     public String publisher; //publisher of the audiobook
     public String runtime; //runtime in HH:MM:SS format
     public List<String> narrator; //a list of narrators
@@ -27,10 +27,10 @@ public class Content {
     public String copyright; //copyright year if available, formatted YYYY
     public List<String> series; //list of series this book is a part of
     public String grade_level; //text tag such as 'Young Adult'
-    public Date street_date; //release date in YYYY-MM-DD format
+    public String street_date; //release date in YYYY-MM-DD format
     public String language; //multiple languages seperated by a slash
     public List<String> awards; //list of awards
-    public Date times_bestseller_date; //bestseller date in YYYY-MM-DD format
+    public String times_bestseller_date; //bestseller date in YYYY-MM-DD format
     public boolean common_core; //true or false
     public boolean chapterized; //true or false
     public String title_acquisition_status; //title status i.e. "Rights Secured"

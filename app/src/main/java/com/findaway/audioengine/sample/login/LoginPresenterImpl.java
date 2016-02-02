@@ -44,7 +44,7 @@ public class LoginPresenterImpl implements LoginPresenter, LoginListener {
         System.out.println("Hiding progress...");
         loginView.showProgress(false);
         System.out.println("Navigating to home...");
-        loginView.navigateToHome();
+        loginView.navigateToHome(audioEngineSession);
     }
 
     @Override
