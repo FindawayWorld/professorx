@@ -4,8 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.findaway.audioengine.sample.MainActivity;
-
+import com.findaway.audioengine.sample.R;
 
 /**
  * Created by agofman on 2/2/16.
@@ -14,14 +13,16 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
 
     private static final String TAG = ListViewHolder.class.getSimpleName();
 
-    MainActivity activity;
-
     TextView title;
-    String contentId;
+    TextView author;
 
     public ListViewHolder(View itemView) {
-
         super(itemView);
+
+        View view = itemView;
+        title = (TextView)view.findViewById(R.id.title);
+        author = (TextView)view.findViewById(R.id.author);
+
     }
 
 }

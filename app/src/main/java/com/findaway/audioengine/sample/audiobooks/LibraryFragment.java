@@ -68,6 +68,7 @@ public class LibraryFragment extends Fragment implements AudiobookView {
         mContentListView = (RecyclerView)view.findViewById(R.id.gridview);
         mContentListView.setLayoutManager(mContentLayoutManager);
 
+
         mContentAdapter = new ContentAdapter(getActivity(), new ArrayList<Content>());
         mContentListView.setAdapter(mContentAdapter);
 

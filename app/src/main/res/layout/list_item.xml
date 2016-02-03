@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardView"
     android:layout_gravity="center"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    android:onClick="bookSelected"
     android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
@@ -17,11 +15,6 @@
         android:layout_gravity="center_horizontal"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/cover"
-            android:layout_width="125dip"
-            android:layout_height="188dip"
-            android:contentDescription=""/>
 
         <TextView
             android:id="@+id/title"
@@ -34,5 +27,5 @@
             style="@style/DetailsField"/>
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+</FrameLayout>
 

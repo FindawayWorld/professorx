@@ -43,8 +43,8 @@ public class ContentAdapter extends RecyclerView.Adapter<ListViewHolder> {
         Log.d(TAG, "Binding view holder!");
 
         final Content content = mContent.get(position);
-        viewHolder.title.setText(content.toString());
-        viewHolder.contentId = content.id;
+        viewHolder.title.setText(content.title);
+        viewHolder.author.setText(content.author.toString());
     }
 
     @Override
@@ -56,12 +56,12 @@ public class ContentAdapter extends RecyclerView.Adapter<ListViewHolder> {
     public void add(Content content) {
 
         mContent.add(content);
-        //notifyItemInserted(mContent.size() - 1);
+        notifyItemInserted(mContent.size() - 1);
     }
 
     public void remove(int position) {
 
         mContent.remove(position);
-        //notifyItemRemoved(position);
+        notifyItemRemoved(position);
     }
 }
