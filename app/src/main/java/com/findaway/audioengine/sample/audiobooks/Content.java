@@ -3,9 +3,7 @@ package com.findaway.audioengine.sample.audiobooks;
 /**
  * Created by agofman on 1/27/16.
  */
-import java.lang.Long;
 import java.lang.String;
-import java.util.Date;
 import java.util.List;
 
 public class Content {

@@ -16,7 +16,6 @@ import com.findaway.audioengine.sample.login.LoginActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by agofman on 1/29/16.
