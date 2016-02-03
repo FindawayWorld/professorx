@@ -32,7 +32,7 @@ public class LoginInteractorImpl implements LoginInteractor, Callback<AudioEngin
         OkHttpClient okHttpClient = new OkHttpClient();
         okHttpClient.interceptors().add(interceptor);
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://172.29.97.24:8080/myapp/").client(okHttpClient)
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://172.29.97.23:8080/myapp/").client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(new Gson())).build();
         mLoginService = retrofit.create(LoginService.class);
     }

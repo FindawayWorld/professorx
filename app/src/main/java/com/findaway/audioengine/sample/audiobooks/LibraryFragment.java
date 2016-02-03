@@ -41,7 +41,6 @@ public class LibraryFragment extends Fragment implements AudiobookView {
     }
 
     public static LibraryFragment newInstance() {
-
         LibraryFragment fragment = new LibraryFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -50,7 +49,6 @@ public class LibraryFragment extends Fragment implements AudiobookView {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String accountId = mSharedPreferences.getString(LoginActivity.AUDIO_ENGINE_ACCOUNT_IDS, null);
@@ -67,11 +65,10 @@ public class LibraryFragment extends Fragment implements AudiobookView {
         mContentListView = (RecyclerView)view.findViewById(R.id.gridview);
         mContentListView.setLayoutManager(mContentLayoutManager);
 
-
         mContentAdapter = new ContentAdapter(getActivity(), new ArrayList<Content>());
         mContentListView.setAdapter(mContentAdapter);
 
-        return view;// super.onCreateView(inflater, container, savedInstanceState);
+        return view;
     }
 
 }

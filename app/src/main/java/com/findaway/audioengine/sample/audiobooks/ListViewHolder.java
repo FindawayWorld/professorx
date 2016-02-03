@@ -11,8 +11,6 @@ import com.findaway.audioengine.sample.R;
  */
 public class ListViewHolder extends RecyclerView.ViewHolder {
 
-    private static final String TAG = ListViewHolder.class.getSimpleName();
-
     TextView title;
     TextView author;
 
