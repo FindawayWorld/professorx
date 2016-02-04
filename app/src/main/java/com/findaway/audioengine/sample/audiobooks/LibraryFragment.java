@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.findaway.audioengine.sample.R;
 import com.findaway.audioengine.sample.login.LoginActivity;
@@ -20,7 +21,7 @@ import java.util.List;
 /**
  * Created by agofman on 1/29/16.
  */
-public class LibraryFragment extends Fragment implements AudiobookView {
+public class LibraryFragment extends Fragment implements AudiobookView, AdapterView.OnItemClickListener {
 
     private AudiobookPresenter mAudiobookPresenter;
     private SharedPreferences mSharedPreferences;
@@ -38,6 +39,11 @@ public class LibraryFragment extends Fragment implements AudiobookView {
         {
             mContentAdapter.add(content);
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
     }
 
     public static LibraryFragment newInstance() {

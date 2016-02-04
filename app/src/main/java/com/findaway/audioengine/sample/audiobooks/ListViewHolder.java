@@ -2,6 +2,7 @@ package com.findaway.audioengine.sample.audiobooks;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.findaway.audioengine.sample.R;
@@ -13,6 +14,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
 
     TextView title;
     TextView author;
+    ImageView cover;
 
     public ListViewHolder(View itemView) {
         super(itemView);
@@ -20,7 +22,6 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         View view = itemView;
         title = (TextView)view.findViewById(R.id.title);
         author = (TextView)view.findViewById(R.id.author);
-
+        cover = (ImageView)view.findViewById(R.id.cover);
     }
-
 }

@@ -163,6 +163,7 @@ The process makes the api call, and returns a list of content objects(discussed 
 this process completes it passes the list of content objects back to the view to handle displaying
 the list of audiobooks. The setAudiobookList method adds each of the content objects to a content 
 adapter. The content adapter handles how each content object will display on the screen.
+
 ``` Java
 @Override
 public void setAudiobookList(List<Content> audiobookList) {
@@ -174,5 +175,4 @@ public void setAudiobookList(List<Content> audiobookList) {
 ```
  
 Once this is all put together you will have a recycler view with all of the audiobook you have access
-to from your account.  
-
+to from your account.

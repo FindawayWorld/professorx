@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.findaway.audioengine.sample.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -45,6 +46,8 @@ public class ContentAdapter extends RecyclerView.Adapter<ListViewHolder> {
         final Content content = mContent.get(position);
         viewHolder.title.setText(content.title);
         viewHolder.author.setText(content.author.toString());
+        Picasso.with(mContext).load(mContext.getResources().getString(R.string.MR_IMAGE_COVER_BASE) + content.id + mContext.getResources()
+                .getString(R.string.MR_IMAGE_CONTENT_LIST_PARAMS)).into(viewHolder.cover);
     }
 
     @Override

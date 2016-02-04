@@ -12,5 +12,7 @@
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="MR_IMAGE_COVER_BASE">http://images.findawayworld.com/v1/image/cover/</string>
+    <string name="MR_IMAGE_CONTENT_LIST_PARAMS">\?width=140&amp;quality=80</string>
 
 </resources>
