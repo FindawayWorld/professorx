@@ -71,7 +71,98 @@ public class LibraryFragment extends Fragment implements AudiobookView {
     }
 ```
 
+###AudiobookPresenterImpl
+The presenters job is the handle the interaction between the view and the interactor. It passes all
+of the required data between the objects and helps them communicate. 
+``` Java
+package com.findaway.audioengine.sample.audiobooks;
+import java.util.List;
 
+public class AudiobookPresenterImpl implements AudiobookPresenter, AudiobookListener {
 
+    AudiobookInteractor mAudiobookInteractor;
+    AudiobookView mAudiobookView;
 
+    public AudiobookPresenterImpl(AudiobookView audiobookView)
+    {
+        mAudiobookView = audiobookView;
+        mAudiobookInteractor = new AudiobookInteractorImpl();
+    }
+
+    @Override
+    public void getAudiobook(String sessionId, String accountId) {
+
+        mAudiobookInteractor.getContentList(sessionId, accountId, this);
+    }
+
+    @Override
+    public void success(List<Content> audiobookList) {
+        mAudiobookView.setAudiobookList(audiobookList);
+    }
+
+    @Override
+    public void error(Integer code, String message) {
+
+    }
+}
+```
+
+###AudiobookInteractorImpl
+The job of the interactor is to handle your api calls and execute business logic. Once the interactor
+gets a result it can communicate it back to the presenter. 
+``` Java
+package com.findaway.audioengine.sample.audiobooks;
+
+import com.google.gson.Gson;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.logging.HttpLoggingInterceptor;
+
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.GsonConverterFactory;
+import retrofit.Response;
+import retrofit.Retrofit;
+
+public class AudiobookInteractorImpl implements AudiobookInteractor, Callback<List<Content>> {
+
+    private AudiobookService mAudiobookService;
+    private AudiobookListener mAudiobookListener;
+
+    public AudiobookInteractorImpl() {
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient okHttpClient = new OkHttpClient();
+        okHttpClient.interceptors().add(interceptor);
+
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.findawayworld.com/v3/").client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(new Gson())).build();
+        mAudiobookService = retrofit.create(AudiobookService.class);
+    }
+
+    @Override
+    public void onResponse(Response<List<Content>> response, Retrofit retrofit) {
+        mAudiobookListener.success(response.body());
+    }
+
+    @Override
+    public void onFailure(Throwable t) {
+        mAudiobookListener.error(500, t.getMessage());
+    }
+
+    @Override
+    public void getContentList(String sessionId, String accountId, AudiobookListener audiobookListener) {
+        mAudiobookListener = audiobookListener;
+        mAudiobookService.getContentList(sessionId, accountId).enqueue(this);
+    }
+}
+```
+
+The process makes the api call, and returns a list of content objects(discussed in tutorial 1). When
+this process completes it passes the list of content objects back to the view to handle displaying
+the list of audiobooks. The setAudiobookList method adds each of the content objects to a content 
+adapter. The content adapter handles how each content object will display on the screen. Once this 
+is all put together you will have a recycler view with all of the audiobook you have access to from 
+your account.  
 
