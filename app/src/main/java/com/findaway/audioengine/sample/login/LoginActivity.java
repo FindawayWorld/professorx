@@ -119,9 +119,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     public void navigateToHome(AudioEngineSession audioEngineSession) {
 
         Log.i(TAG, "Navigating to MainActivity...");
-        mSharedPreferences.edit().putString(AUDIO_ENGINE_SESSION_KEY, audioEngineSession.sessionKey).commit();
-        mSharedPreferences.edit().putString(AUDIO_ENGINE_ACCOUNT_IDS, audioEngineSession.account_ids.get(0)).commit();
-        mSharedPreferences.edit().putString(AUDIO_ENGINE_CONSUMER_KEY, audioEngineSession.consumer_key).commit();
+        mSharedPreferences.edit().putString(AUDIO_ENGINE_SESSION_KEY, audioEngineSession.sessionKey).apply();
+        mSharedPreferences.edit().putString(AUDIO_ENGINE_ACCOUNT_IDS, audioEngineSession.account_ids.get(0)).apply();
+        mSharedPreferences.edit().putString(AUDIO_ENGINE_CONSUMER_KEY, audioEngineSession.consumer_key).apply();
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

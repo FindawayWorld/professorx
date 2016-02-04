@@ -23,7 +23,5 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = LibraryFragment.newInstance();
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.contentFrame, fragment).commit();
-
     }
-
 }
