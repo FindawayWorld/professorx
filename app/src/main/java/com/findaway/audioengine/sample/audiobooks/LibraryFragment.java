@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by agofman on 1/29/16.
  */
-public class LibraryFragment extends Fragment implements AudiobookView, AdapterView.OnItemClickListener {
+public class LibraryFragment extends Fragment implements AudiobookView {
 
     private AudiobookPresenter mAudiobookPresenter;
     private SharedPreferences mSharedPreferences;
@@ -39,11 +39,6 @@ public class LibraryFragment extends Fragment implements AudiobookView, AdapterV
         {
             mContentAdapter.add(content);
         }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
     }
 
     public static LibraryFragment newInstance() {
