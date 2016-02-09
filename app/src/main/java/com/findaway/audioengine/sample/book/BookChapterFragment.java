@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -24,24 +27,32 @@ import com.findaway.audioengine.model.DownloadProgressEvent;
 import com.findaway.audioengine.sample.R;
 import com.findaway.audioengine.sample.audiobooks.Chapter;
 import com.findaway.audioengine.sample.audiobooks.Content;
+import com.findaway.audioengine.sample.audiobooks.RecyclerViewClickListener;
 import com.findaway.audioengine.sample.login.LoginActivity;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by agofman on 2/5/16.
  */
-public class BookChapterFragment extends Fragment implements BookView, DownloadListener {
+public class BookChapterFragment extends Fragment implements BookView, DownloadListener, RecyclerViewClickListener {
 
     private Content mContent;
-    private List<Chapter> mChapters;
     private BookPresenter mBookPresenter;
     private DownloadEngine mDownloadEngine;
     private String mContentId;
     private SharedPreferences mSharedPreferences;
+    private LinearLayoutManager mChapterLayoutManager;
+    private RecyclerView mChapterListView;
+    private ChapterContentAdapter mChapterContentAdapter;
 
     public BookChapterFragment() {
         mBookPresenter = new BookPresenterImpl(this);
+    }
+
+    @Override
+    public void recyclerViewListClicked(View v, int position) {
+        Log.d(getTag(), "test");
     }
 
     @Override
@@ -60,14 +71,13 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
         } catch (AudioEngineException e) {
             Log.e(getTag(),"Download engine error.");
         }
-
         mBookPresenter.getContent(sessionId, mContentId);
     }
 
     @Override
     public void setContent(Content content) {
         mContent = content;
-        mChapters = content.chapters;
+        mChapterContentAdapter.setChapters(content.chapters);
     }
 
     @Override
@@ -78,6 +88,11 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     @Override
     public void update(DownloadProgressEvent downloadProgressEvent) {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -108,7 +123,12 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chapter, container, false);
+        mChapterLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        mChapterListView = (RecyclerView)view.findViewById(R.id.chapter_list);
+        mChapterListView.setLayoutManager(mChapterLayoutManager);
 
+        mChapterContentAdapter = new ChapterContentAdapter(getActivity(), new ArrayList<Chapter>(), this);
+        mChapterListView.setAdapter(mChapterContentAdapter);
         return view;
     }
 

@@ -11,8 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import com.findaway.audioengine.config.LogLevel;
-import com.findaway.audioengine.mobile.AudioEngine;
 import com.findaway.audioengine.sample.R;
 import com.findaway.audioengine.sample.login.LoginActivity;
 

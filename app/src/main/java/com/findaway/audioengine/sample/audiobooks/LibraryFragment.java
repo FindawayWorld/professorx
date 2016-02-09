@@ -31,7 +31,7 @@ public class LibraryFragment extends Fragment implements AudiobookView, Recycler
     private SharedPreferences mSharedPreferences;
     private ContentAdapter mContentAdapter;
     private GridLayoutManager mContentLayoutManager;
-    RecyclerView mContentListView;
+    private RecyclerView mContentListView;
 
     public LibraryFragment() {
         mAudiobookPresenter = new AudiobookPresenterImpl(this);
@@ -41,7 +41,7 @@ public class LibraryFragment extends Fragment implements AudiobookView, Recycler
     public void recyclerViewListClicked(View v, int position) {
         TextView cidTextView = (TextView)v.findViewById(R.id.id);
         String contentId = cidTextView.getText().toString();
-        
+
         Intent detailsIntent = new Intent(getActivity(), BookActivity.class);
 
         detailsIntent.putExtra(BookActivity.EXTRA_CONTENT_ID, contentId);
