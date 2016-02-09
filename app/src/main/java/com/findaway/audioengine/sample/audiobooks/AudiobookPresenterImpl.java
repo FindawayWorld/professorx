@@ -9,15 +9,13 @@ public class AudiobookPresenterImpl implements AudiobookPresenter, AudiobookList
     AudiobookInteractor mAudiobookInteractor;
     AudiobookView mAudiobookView;
 
-    public AudiobookPresenterImpl(AudiobookView audiobookView)
-    {
+    public AudiobookPresenterImpl(AudiobookView audiobookView) {
         mAudiobookView = audiobookView;
         mAudiobookInteractor = new AudiobookInteractorImpl();
     }
 
     @Override
     public void getAudiobook(String sessionId, String accountId) {
-
         mAudiobookInteractor.getContentList(sessionId, accountId, this);
     }
 

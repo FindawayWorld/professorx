@@ -41,8 +41,9 @@ public class LibraryFragment extends Fragment implements AudiobookView, Recycler
     public void recyclerViewListClicked(View v, int position) {
         TextView cidTextView = (TextView)v.findViewById(R.id.id);
         String contentId = cidTextView.getText().toString();
-
+        
         Intent detailsIntent = new Intent(getActivity(), BookActivity.class);
+
         detailsIntent.putExtra(BookActivity.EXTRA_CONTENT_ID, contentId);
         startActivity(detailsIntent);
     }

@@ -19,6 +19,15 @@ android {
     }
 }
 
+repositories {
+
+    mavenCentral()
+
+    maven {
+        url "http://maven.findawayworld.com/artifactory/libs-release/"
+    }
+}
+
 dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
@@ -28,4 +37,5 @@ dependencies {
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
     testCompile 'junit:junit:4.12'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.findaway:audio-engine-mobile:6.0.5'
 }
