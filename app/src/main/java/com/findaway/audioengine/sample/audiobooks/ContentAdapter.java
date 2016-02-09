@@ -21,11 +21,13 @@ public class ContentAdapter extends RecyclerView.Adapter<ListViewHolder> {
 
     private Context mContext;
     private List<Content> mContent;
+    private static RecyclerViewClickListener mRecyclerViewClickListener;
 
-    public ContentAdapter(Context context, List<Content> content) {
+    public ContentAdapter(Context context, List<Content> content, RecyclerViewClickListener recyclerViewClickListener) {
 
         mContext = context;
         mContent = content;
+        mRecyclerViewClickListener = recyclerViewClickListener;
     }
 
     @Override
@@ -34,8 +36,8 @@ public class ContentAdapter extends RecyclerView.Adapter<ListViewHolder> {
         Log.d(TAG, "Creating view holder.");
 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.list_item, parent, false);
-        return new ListViewHolder(view);
+        View view = inflater.inflate(R.layout.library_list_item, parent, false);
+        return new ListViewHolder(view, mRecyclerViewClickListener);
     }
 
     @Override
@@ -46,6 +48,7 @@ public class ContentAdapter extends RecyclerView.Adapter<ListViewHolder> {
         final Content content = mContent.get(position);
         viewHolder.title.setText(content.title);
         viewHolder.author.setText(content.author.toString());
+        viewHolder.id.setText(content.id);
         Picasso.with(mContext).load(mContext.getResources().getString(R.string.MR_IMAGE_COVER_BASE) + content.id + mContext.getResources()
                 .getString(R.string.MR_IMAGE_CONTENT_LIST_PARAMS)).into(viewHolder.cover);
     }
