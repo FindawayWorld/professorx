@@ -1,9 +1,7 @@
 package com.findaway.audioengine.sample.book;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.findaway.audioengine.sample.R;
-import com.findaway.audioengine.sample.login.LoginActivity;
 
 /**
  * Created by agofman on 2/8/16.
@@ -20,10 +17,8 @@ import com.findaway.audioengine.sample.login.LoginActivity;
 public class BookActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     public static final String EXTRA_CONTENT_ID = "EXTRA_CONTENT_ID";
     private String mContentId;
-    private ViewPager mViewPager;
     private BookPagerAdapter mCustomPagerAdapter;
     private Toolbar mToolbar;
-    private SharedPreferences mSharedPreferences;
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -49,14 +44,12 @@ public class BookActivity extends AppCompatActivity implements ViewPager.OnPageC
         setSupportActionBar(mToolbar);
 
         mContentId = getIntent().getStringExtra(EXTRA_CONTENT_ID);
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String sessionId = mSharedPreferences.getString(LoginActivity.AUDIO_ENGINE_SESSION_KEY, null);
 
-        mViewPager = (ViewPager)findViewById(R.id.book_pager);
-        mViewPager.addOnPageChangeListener(this);
+        ViewPager viewPager = (ViewPager)findViewById(R.id.book_pager);
+        viewPager.addOnPageChangeListener(this);
 
         mCustomPagerAdapter = new BookPagerAdapter(getSupportFragmentManager(), this);
-        mViewPager.setAdapter(mCustomPagerAdapter);
+        viewPager.setAdapter(mCustomPagerAdapter);
     }
 
     class BookPagerAdapter extends FragmentPagerAdapter {

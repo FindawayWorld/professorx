@@ -27,6 +27,6 @@ public class BookPresenterImpl implements BookPresenter, BookListener {
 
     @Override
     public void error(Integer code, String message) {
-
+        mBookView.showError(message);
     }
 }

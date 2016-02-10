@@ -7,4 +7,6 @@ import com.findaway.audioengine.sample.audiobooks.Content;
  */
 public interface BookView {
     public void setContent(Content content);
+
+    public void showError(String errorMessage);
 }

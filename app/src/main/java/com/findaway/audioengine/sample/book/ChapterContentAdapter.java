@@ -1,6 +1,5 @@
 package com.findaway.audioengine.sample.book;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,13 +16,10 @@ import java.util.List;
  */
 public class ChapterContentAdapter extends RecyclerView.Adapter<ChapterViewHolder> {
 
-    private Context mContext;
     private List<Chapter> mChapters;
     private static RecyclerViewClickListener mRecyclerViewClickListener;
 
-    public ChapterContentAdapter(Context context, List<Chapter> chapters, RecyclerViewClickListener recyclerViewClickListener) {
-
-        mContext = context;
+    public ChapterContentAdapter(List<Chapter> chapters, RecyclerViewClickListener recyclerViewClickListener) {
         mChapters = chapters;
         mRecyclerViewClickListener = recyclerViewClickListener;
     }
@@ -34,7 +30,6 @@ public class ChapterContentAdapter extends RecyclerView.Adapter<ChapterViewHolde
         return new ChapterViewHolder(view, mRecyclerViewClickListener);
     }
 
-
     @Override
     public int getItemCount() {
         return mChapters.size();
@@ -42,7 +37,7 @@ public class ChapterContentAdapter extends RecyclerView.Adapter<ChapterViewHolde
 
     @Override
     public void onBindViewHolder(ChapterViewHolder holder, int position) {
-        holder.chapter_number.setText("Chapter Number " + mChapters.get(position).chapter_number);
+        holder.chapter_number.setText("Chapter Number " + mChapters.get(position).chapter_number.toString());
         holder.duration.setText("Duration is : " + mChapters.get(position).duration.toString());
         holder.part_number.setText("Part Number : " + mChapters.get(position).part_number);
     }

@@ -37,13 +37,8 @@ import java.util.ArrayList;
  */
 public class BookChapterFragment extends Fragment implements BookView, DownloadListener, RecyclerViewClickListener {
 
-    private Content mContent;
     private BookPresenter mBookPresenter;
     private DownloadEngine mDownloadEngine;
-    private String mContentId;
-    private SharedPreferences mSharedPreferences;
-    private LinearLayoutManager mChapterLayoutManager;
-    private RecyclerView mChapterListView;
     private ChapterContentAdapter mChapterContentAdapter;
 
     public BookChapterFragment() {
@@ -53,6 +48,7 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     @Override
     public void recyclerViewListClicked(View v, int position) {
         Log.d(getTag(), "test");
+        //mDownloadEngine.download();
     }
 
     @Override
@@ -60,24 +56,32 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mContentId = getArguments().getString(BookActivity.EXTRA_CONTENT_ID);
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sessionId = mSharedPreferences.getString(LoginActivity.AUDIO_ENGINE_SESSION_KEY, null);
-
-        AudioEngine.init(getActivity(), sessionId, LogLevel.WARNING);
-        try {
-            mDownloadEngine = AudioEngine.getDownloadEngine();
-            mDownloadEngine.registerDownloadListener(this);
-        } catch (AudioEngineException e) {
-            Log.e(getTag(),"Download engine error.");
+        String contentId = getArguments().getString(BookActivity.EXTRA_CONTENT_ID);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sessionId = sharedPreferences.getString(LoginActivity.AUDIO_ENGINE_SESSION_KEY, null);
+        if (sessionId != null) {
+            AudioEngine.init(getActivity(), sessionId, LogLevel.WARNING);
+            try {
+                mDownloadEngine = AudioEngine.getDownloadEngine();
+                mDownloadEngine.registerDownloadListener(this);
+            } catch (AudioEngineException e) {
+                Log.e(getTag(), "Download engine error.");
+            }
+            mBookPresenter.getContent(sessionId, contentId);
         }
-        mBookPresenter.getContent(sessionId, mContentId);
+        else {
+            Log.e(getTag(), "Session Id was null. Not getting book chapter list.");
+        }
     }
 
     @Override
     public void setContent(Content content) {
-        mContent = content;
         mChapterContentAdapter.setChapters(content.chapters);
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -123,12 +127,12 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chapter, container, false);
-        mChapterLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        mChapterListView = (RecyclerView)view.findViewById(R.id.chapter_list);
-        mChapterListView.setLayoutManager(mChapterLayoutManager);
+        LinearLayoutManager chapterLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        RecyclerView chapterListView = (RecyclerView)view.findViewById(R.id.chapter_list);
+        chapterListView.setLayoutManager(chapterLayoutManager);
 
-        mChapterContentAdapter = new ChapterContentAdapter(getActivity(), new ArrayList<Chapter>(), this);
-        mChapterListView.setAdapter(mChapterContentAdapter);
+        mChapterContentAdapter = new ChapterContentAdapter(new ArrayList<Chapter>(), this);
+        chapterListView.setAdapter(mChapterContentAdapter);
         return view;
     }
 
