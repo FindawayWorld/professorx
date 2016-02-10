@@ -15,6 +15,7 @@ public class ChapterViewHolder extends RecyclerView.ViewHolder implements View.O
     TextView chapter_number;
     TextView part_number;
     TextView duration;
+    TextView download_status;
 
     RecyclerViewClickListener mRecyclerViewClickListener;
 
@@ -31,5 +32,6 @@ public class ChapterViewHolder extends RecyclerView.ViewHolder implements View.O
         chapter_number = (TextView)itemView.findViewById(R.id.chapter_number);
         part_number = (TextView)itemView.findViewById(R.id.part_number);
         duration = (TextView)itemView.findViewById(R.id.duration);
+        download_status = (TextView)itemView.findViewById(R.id.download_status);
     }
 }

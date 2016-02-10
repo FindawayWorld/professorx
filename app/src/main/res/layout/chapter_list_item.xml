@@ -12,31 +12,47 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:layout_gravity="center_horizontal"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/chapter_number"
-            android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_gravity="center|top"
-            android:gravity="center_horizontal"
-            android:text="Chapter number" />
-        <TextView
-            android:id="@+id/part_number"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/chapter_number"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center|top"
+                android:gravity="center_horizontal"
+                android:text="Chapter number" />
+            <TextView
+                android:id="@+id/part_number"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center|top"
+                android:gravity="center_horizontal"
+                android:text="part number" />
+            <TextView
+                android:id="@+id/duration"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center|top"
+                android:gravity="center_horizontal"
+                android:text="duration" />
+        </LinearLayout>
+        <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_gravity="center|top"
-            android:gravity="center_horizontal"
-            android:text="part number" />
-        <TextView
-            android:id="@+id/duration"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center|top"
-            android:gravity="center_horizontal"
-            android:text="duration" />
-
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+            <TextView
+                android:id="@+id/download_status"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_horizontal"
+                android:textSize="18dp"
+                android:text="Download status" />
+        </FrameLayout>
     </LinearLayout>
 
 </FrameLayout>
