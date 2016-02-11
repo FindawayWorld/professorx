@@ -65,6 +65,19 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     }
 
     @Override
+    public void recyclerViewListLongClicked(View v, int position, TextView download_status, ProgressBar download_progress) {
+        if (download_status.getText() == "DOWNLOADED") {
+            mChapter = mChapterContentAdapter.getItem(position);
+            mDownloadProgress = download_progress;
+            mDownloadStatus = download_status;
+            mDownloadEngine.delete(mContentId, mChapter.part_number, mChapter.chapter_number);
+        }
+        else {
+            Toast.makeText(getActivity(), "No file found to delete", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -150,6 +163,17 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getTitle() == "Download All" ) {
+            try {
+                mDownloadEngine.download(mContentId, 0, 0, null, mAccountId, true, false);
+            }
+            catch (AudioEngineException ex)
+            {
+                Log.e(getTag(), "Problem while downloading content");
+            }
+        } else if (item.getTitle() == "Delete All") {
+            mDownloadEngine.delete(mContentId);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -193,6 +217,7 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.add("Download All");
+        menu.add("Delete All");
         super.onCreateOptionsMenu(menu, inflater);
     }
 }

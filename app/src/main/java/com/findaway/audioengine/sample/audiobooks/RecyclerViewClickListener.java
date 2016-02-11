@@ -9,4 +9,6 @@ import android.widget.TextView;
  */
 public interface RecyclerViewClickListener {
     public void recyclerViewListClicked(View v, int position, TextView download_status, ProgressBar download_progress);
+
+    public void recyclerViewListLongClicked(View v, int position, TextView download_status, ProgressBar download_progress);
 }

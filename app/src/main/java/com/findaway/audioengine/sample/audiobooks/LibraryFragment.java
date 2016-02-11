@@ -52,6 +52,11 @@ public class LibraryFragment extends Fragment implements AudiobookView, Recycler
     }
 
     @Override
+    public void recyclerViewListLongClicked(View v, int position, TextView download_status, ProgressBar download_progress) {
+
+    }
+
+    @Override
     public void setAudiobookList(List<Content> audiobookList) {
         for (Content content: audiobookList)
         {

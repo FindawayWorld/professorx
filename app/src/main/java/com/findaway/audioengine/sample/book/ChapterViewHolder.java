@@ -11,7 +11,7 @@ import com.findaway.audioengine.sample.audiobooks.RecyclerViewClickListener;
 /**
  * Created by agofman on 2/9/16.
  */
-public class ChapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class ChapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
     TextView chapter_number;
     TextView part_number;
@@ -25,10 +25,17 @@ public class ChapterViewHolder extends RecyclerView.ViewHolder implements View.O
         mRecyclerViewClickListener.recyclerViewListClicked(v, this.getLayoutPosition(), download_status, download_progress);
     }
 
+    @Override
+    public boolean onLongClick(View v) {
+        mRecyclerViewClickListener.recyclerViewListLongClicked(v, this.getLayoutPosition(), download_status, download_progress);
+        return true;
+    }
+
     public ChapterViewHolder(View itemView, RecyclerViewClickListener recyclerViewClickListener) {
         super(itemView);
         mRecyclerViewClickListener = recyclerViewClickListener;
         itemView.setOnClickListener(this);
+        itemView.setOnLongClickListener(this);
 
         chapter_number = (TextView)itemView.findViewById(R.id.chapter_number);
         part_number = (TextView)itemView.findViewById(R.id.part_number);
