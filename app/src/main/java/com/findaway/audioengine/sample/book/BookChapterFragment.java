@@ -1,8 +1,7 @@
 package com.findaway.audioengine.sample.book;
 
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +13,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.findaway.audioengine.DownloadListener;
@@ -28,7 +29,6 @@ import com.findaway.audioengine.sample.R;
 import com.findaway.audioengine.sample.audiobooks.Chapter;
 import com.findaway.audioengine.sample.audiobooks.Content;
 import com.findaway.audioengine.sample.audiobooks.RecyclerViewClickListener;
-import com.findaway.audioengine.sample.login.LoginActivity;
 
 import java.util.ArrayList;
 
@@ -40,34 +40,47 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     private BookPresenter mBookPresenter;
     private DownloadEngine mDownloadEngine;
     private ChapterContentAdapter mChapterContentAdapter;
+    private String mContentId, mAccountId, mSessionId;
+    private ProgressBar mDownloadProgress;
+    private TextView mDownloadStatus;
+    private Chapter mChapter;
+    private Context mContext;
 
     public BookChapterFragment() {
         mBookPresenter = new BookPresenterImpl(this);
     }
 
     @Override
-    public void recyclerViewListClicked(View v, int position) {
-        Log.d(getTag(), "test");
-        //mDownloadEngine.download();
+    public void recyclerViewListClicked(View v, int position, TextView download_status, ProgressBar download_progress) {
+        mChapter =  mChapterContentAdapter.getItem(position);
+        mDownloadProgress = download_progress;
+        mDownloadStatus = download_status;
+        try {
+            mDownloadEngine.download(mContentId, mChapter.part_number, mChapter.chapter_number, null, mAccountId, false, false);
+        }
+        catch (AudioEngineException ex)
+        {
+            Log.e(getTag(), "Problem while downloading content");
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        String contentId = getArguments().getString(BookActivity.EXTRA_CONTENT_ID);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sessionId = sharedPreferences.getString(LoginActivity.AUDIO_ENGINE_SESSION_KEY, null);
-        if (sessionId != null) {
-            AudioEngine.init(getActivity(), sessionId, LogLevel.WARNING);
+        mContext = getActivity();
+        mContentId = getArguments().getString(BookActivity.EXTRA_CONTENT_ID);
+        mSessionId = getArguments().getString(BookActivity.EXTRA_SESSION_ID);
+        mAccountId = getArguments().getString(BookActivity.EXTRA_ACCOUNT_ID);
+        if (mSessionId != null) {
             try {
+                AudioEngine.init(getActivity(), mSessionId, LogLevel.WARNING);
                 mDownloadEngine = AudioEngine.getDownloadEngine();
                 mDownloadEngine.registerDownloadListener(this);
             } catch (AudioEngineException e) {
                 Log.e(getTag(), "Download engine error.");
             }
-            mBookPresenter.getContent(sessionId, contentId);
+            mBookPresenter.getContent(mSessionId, mContentId);
         }
         else {
             Log.e(getTag(), "Session Id was null. Not getting book chapter list.");
@@ -76,7 +89,7 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
 
     @Override
     public void setContent(Content content) {
-        mChapterContentAdapter.setChapters(content.chapters);
+        mChapterContentAdapter.setContent(content);
     }
 
     @Override
@@ -86,12 +99,53 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
 
     @Override
     public void update(DownloadEvent downloadEvent) {
+        if (downloadEvent.code == DownloadEvent.CHAPTER_DOWNLOAD_COMPLETED && downloadEvent.chapter != null) {
 
+            if (downloadEvent.chapter.contentId.equals(mContentId) && downloadEvent.chapter.partNumber == mChapter.part_number
+                    && downloadEvent.chapter.chapterNumber == mChapter.chapter_number) {
+
+                Log.d(getTag(), "Download complete for " + downloadEvent.chapter + ". This is " + mContentId + ", " + mChapter.part_number + ", " + mChapter.chapter_number);
+                ((BookActivity) mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        mDownloadStatus.setText("DOWNLOADED");
+                        mDownloadProgress.setProgress(100);
+                    }
+                });
+            }
+
+        } else if (downloadEvent.code == DownloadEvent.DELETE_COMPLETE && downloadEvent.chapter != null) {
+
+            if (downloadEvent.chapter.contentId.equals(mContentId) && downloadEvent.chapter.partNumber == mChapter.part_number
+                    && downloadEvent.chapter.chapterNumber == mChapter.chapter_number) {
+
+                Log.d(getTag(), "Delete complete for " + downloadEvent.chapter + ". This is " + mContentId + ", " + mChapter.part_number + ", " + mChapter.chapter_number);
+                ((BookActivity) mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        mDownloadStatus.setText("NOT_DOWNLOADED");
+                        mDownloadProgress.setProgress(0);
+                    }
+                });
+            }
+        }
     }
 
     @Override
-    public void update(DownloadProgressEvent downloadProgressEvent) {
+    public void update(final DownloadProgressEvent downloadProgressEvent) {
+        if (downloadProgressEvent.chapter != null && downloadProgressEvent.chapter.contentId.equals(mContentId) && downloadProgressEvent.chapter.partNumber == mChapter.part_number
+                && downloadProgressEvent.chapter.chapterNumber == mChapter.chapter_number) {
 
+            ((BookActivity) mContext).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mDownloadStatus.setText(downloadProgressEvent.chapterPercentage + " %");
+                    mDownloadProgress.setProgress(downloadProgressEvent.chapterPercentage);
+                }
+            });
+        }
     }
 
     @Override
@@ -131,7 +185,7 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
         RecyclerView chapterListView = (RecyclerView)view.findViewById(R.id.chapter_list);
         chapterListView.setLayoutManager(chapterLayoutManager);
 
-        mChapterContentAdapter = new ChapterContentAdapter(new ArrayList<Chapter>(), this);
+        mChapterContentAdapter = new ChapterContentAdapter(this, new ArrayList<Chapter>(), this, mDownloadEngine);
         chapterListView.setAdapter(mChapterContentAdapter);
         return view;
     }

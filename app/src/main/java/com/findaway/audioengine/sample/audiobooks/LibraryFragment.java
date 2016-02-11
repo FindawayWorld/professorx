@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.findaway.audioengine.sample.book.BookActivity;
@@ -32,19 +33,21 @@ public class LibraryFragment extends Fragment implements AudiobookView, Recycler
     private ContentAdapter mContentAdapter;
     private GridLayoutManager mContentLayoutManager;
     private RecyclerView mContentListView;
+    private String mSessionId;
+    private String mAccountId;
+    private String mContentId;
 
     public LibraryFragment() {
         mAudiobookPresenter = new AudiobookPresenterImpl(this);
     }
 
     @Override
-    public void recyclerViewListClicked(View v, int position) {
-        TextView cidTextView = (TextView)v.findViewById(R.id.id);
-        String contentId = cidTextView.getText().toString();
-
+    public void recyclerViewListClicked(View v, int position, TextView textView, ProgressBar progressBar) {
+        mContentId = mContentAdapter.getContentId(position);
         Intent detailsIntent = new Intent(getActivity(), BookActivity.class);
-
-        detailsIntent.putExtra(BookActivity.EXTRA_CONTENT_ID, contentId);
+        detailsIntent.putExtra(BookActivity.EXTRA_CONTENT_ID, mContentId);
+        detailsIntent.putExtra(BookActivity.EXTRA_SESSION_ID, mSessionId);
+        detailsIntent.putExtra(BookActivity.EXTRA_ACCOUNT_ID, mAccountId);
         startActivity(detailsIntent);
     }
 
@@ -67,9 +70,9 @@ public class LibraryFragment extends Fragment implements AudiobookView, Recycler
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String accountId = mSharedPreferences.getString(LoginActivity.AUDIO_ENGINE_ACCOUNT_IDS, null);
-        String sessionId = mSharedPreferences.getString(LoginActivity.AUDIO_ENGINE_SESSION_KEY, null);
-        mAudiobookPresenter.getAudiobook(sessionId, accountId);
+        mSessionId = mSharedPreferences.getString(LoginActivity.AUDIO_ENGINE_SESSION_KEY, null);
+        mAccountId = mSharedPreferences.getString(LoginActivity.AUDIO_ENGINE_ACCOUNT_IDS, null);
+        mAudiobookPresenter.getAudiobook(mSessionId, mAccountId);
     }
 
     @Nullable

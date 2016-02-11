@@ -20,7 +20,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        mRecyclerViewClickListener.recyclerViewListClicked(v, this.getLayoutPosition());
+        mRecyclerViewClickListener.recyclerViewListClicked(v, this.getLayoutPosition(), null, null );
     }
 
     public ListViewHolder(View itemView, RecyclerViewClickListener recyclerViewClickListener) {

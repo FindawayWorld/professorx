@@ -2,6 +2,7 @@ package com.findaway.audioengine.sample.book;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.findaway.audioengine.sample.R;
@@ -16,12 +17,12 @@ public class ChapterViewHolder extends RecyclerView.ViewHolder implements View.O
     TextView part_number;
     TextView duration;
     TextView download_status;
-
     RecyclerViewClickListener mRecyclerViewClickListener;
+    ProgressBar download_progress;
 
     @Override
     public void onClick(View v) {
-        mRecyclerViewClickListener.recyclerViewListClicked(v, this.getLayoutPosition());
+        mRecyclerViewClickListener.recyclerViewListClicked(v, this.getLayoutPosition(), download_status, download_progress);
     }
 
     public ChapterViewHolder(View itemView, RecyclerViewClickListener recyclerViewClickListener) {
@@ -33,5 +34,7 @@ public class ChapterViewHolder extends RecyclerView.ViewHolder implements View.O
         part_number = (TextView)itemView.findViewById(R.id.part_number);
         duration = (TextView)itemView.findViewById(R.id.duration);
         download_status = (TextView)itemView.findViewById(R.id.download_status);
+        download_progress = (ProgressBar)itemView.findViewById(R.id.progress_bar);
+        download_progress.setMax(100);
     }
 }

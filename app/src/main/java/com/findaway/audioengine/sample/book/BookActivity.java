@@ -16,7 +16,9 @@ import com.findaway.audioengine.sample.R;
  */
 public class BookActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     public static final String EXTRA_CONTENT_ID = "EXTRA_CONTENT_ID";
-    private String mContentId;
+    public static final String EXTRA_SESSION_ID = "EXTRA_SESSION_ID";
+    public static final String EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID";
+    private String mContentId, mSessionId, mAccountId;
     private BookPagerAdapter mCustomPagerAdapter;
     private Toolbar mToolbar;
 
@@ -44,6 +46,8 @@ public class BookActivity extends AppCompatActivity implements ViewPager.OnPageC
         setSupportActionBar(mToolbar);
 
         mContentId = getIntent().getStringExtra(EXTRA_CONTENT_ID);
+        mSessionId = getIntent().getStringExtra(EXTRA_SESSION_ID);
+        mAccountId = getIntent().getStringExtra(EXTRA_ACCOUNT_ID);
 
         ViewPager viewPager = (ViewPager)findViewById(R.id.book_pager);
         viewPager.addOnPageChangeListener(this);
@@ -72,6 +76,8 @@ public class BookActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
             Bundle args = new Bundle();
             args.putString(EXTRA_CONTENT_ID, mContentId);
+            args.putString(EXTRA_SESSION_ID, mSessionId);
+            args.putString(EXTRA_ACCOUNT_ID, mAccountId);
             fragment.setArguments(args);
             return fragment;
         }

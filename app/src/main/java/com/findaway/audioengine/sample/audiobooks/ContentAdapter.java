@@ -65,6 +65,11 @@ public class ContentAdapter extends RecyclerView.Adapter<ListViewHolder> {
         notifyItemInserted(mContent.size() - 1);
     }
 
+    public String getContentId(int position){
+        return mContent.get(position).id;
+
+    }
+
     public void remove(int position) {
 
         mContent.remove(position);

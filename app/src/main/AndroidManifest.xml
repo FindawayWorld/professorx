@@ -39,10 +39,12 @@
             android:label="Details Activity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <service android:name="com.findaway.audioengine.mobile.PlaybackService" />
-
-        <provider tools:replace="android:authorities" android:authorities="com.example.audioengine.contentprovider" android:name="com.findaway.audioengine.mobile.AudioEngineProvider"/>
 
     </application>
+
+    <service android:name="com.findaway.audioengine.mobile.PlaybackService" />
+
+    <provider tools:replace="android:authorities" android:authorities="com.example.audioengine.contentprovider" android:name="com.findaway.audioengine.mobile.AudioEngineProvider"/>
+
 
 </manifest>
