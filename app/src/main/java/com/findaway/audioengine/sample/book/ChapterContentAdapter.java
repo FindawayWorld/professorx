@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.findaway.audioengine.DownloadListener;
 import com.findaway.audioengine.exceptions.ChapterNotFoundException;
 import com.findaway.audioengine.mobile.DownloadEngine;
 import com.findaway.audioengine.model.DownloadStatus;
@@ -25,14 +24,12 @@ public class ChapterContentAdapter extends RecyclerView.Adapter<ChapterViewHolde
     private List<Chapter> mChapters;
     private static RecyclerViewClickListener mRecyclerViewClickListener;
     private DownloadEngine mDownloadEngine;
-    private DownloadListener mDownloadListener;
     private Content mContent;
 
-    public ChapterContentAdapter(DownloadListener downloadListener,List<Chapter> chapters, RecyclerViewClickListener recyclerViewClickListener, DownloadEngine downloadEngine) {
+    public ChapterContentAdapter(List<Chapter> chapters, RecyclerViewClickListener recyclerViewClickListener, DownloadEngine downloadEngine) {
         mChapters = chapters;
         mRecyclerViewClickListener = recyclerViewClickListener;
         mDownloadEngine = downloadEngine;
-        mDownloadListener = downloadListener;
     }
     @Override
     public ChapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -41,7 +38,7 @@ public class ChapterContentAdapter extends RecyclerView.Adapter<ChapterViewHolde
         return new ChapterViewHolder(view, mRecyclerViewClickListener);
     }
 
-    public Chapter getItem(int position) {
+    public Chapter getChapter(int position) {
         return mChapters.get(position);
     }
 
@@ -60,22 +57,17 @@ public class ChapterContentAdapter extends RecyclerView.Adapter<ChapterViewHolde
 
         try {
             DownloadStatus status = mDownloadEngine.getStatus(content.id, chapter.part_number, chapter.chapter_number);
-            if (status != DownloadStatus.DOWNLOADING) {
-                holder.download_status.setText(status.name());
-                if (status == DownloadStatus.DOWNLOADED) {
-                    holder.download_progress.setProgress(100);
-                } else {
-                    holder.download_progress.setProgress(0);
-                }
+            holder.download_status.setText(status.name());
+            if (status == DownloadStatus.DOWNLOADED) {
+                holder.download_progress.setProgress(100);
+            } else {
+                holder.download_progress.setProgress(0);
             }
         } catch (ChapterNotFoundException e) {
-            DownloadStatus status = DownloadStatus.NOT_DOWNLOADED;
-            holder.download_status.setText(status.toString());
+            holder.download_status.setText(DownloadStatus.NOT_DOWNLOADED.toString());
             holder.download_progress.setProgress(0);
             e.printStackTrace();
         }
-
-        mDownloadEngine.registerDownloadListener(mDownloadListener);
     }
 
     public void setContent(Content content)

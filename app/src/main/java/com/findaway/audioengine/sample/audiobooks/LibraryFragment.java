@@ -11,8 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.findaway.audioengine.sample.book.BookActivity;
 import com.findaway.audioengine.sample.R;
@@ -42,7 +40,7 @@ public class LibraryFragment extends Fragment implements AudiobookView, Recycler
     }
 
     @Override
-    public void recyclerViewListClicked(View v, int position, TextView textView, ProgressBar progressBar) {
+    public void recyclerViewListClicked(View v, int position) {
         mContentId = mContentAdapter.getContentId(position);
         Intent detailsIntent = new Intent(getActivity(), BookActivity.class);
         detailsIntent.putExtra(BookActivity.EXTRA_CONTENT_ID, mContentId);
@@ -52,7 +50,7 @@ public class LibraryFragment extends Fragment implements AudiobookView, Recycler
     }
 
     @Override
-    public void recyclerViewListLongClicked(View v, int position, TextView download_status, ProgressBar download_progress) {
+    public void recyclerViewListLongClicked(View v, int position) {
 
     }
 

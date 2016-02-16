@@ -18,5 +18,8 @@
     <string name="part_number">Part Number</string>
     <string name="duration">duration</string>
     <string name="download_status">Download Status</string>
+    <string name="not_downloaded">NOT_DOWNLOADED</string>
+    <string name="downloaded">DOWNLOADED</string>
+    <string name="downloading">DOWNLOADING</string>
 
 </resources>

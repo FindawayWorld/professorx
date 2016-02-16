@@ -20,12 +20,12 @@ public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        mRecyclerViewClickListener.recyclerViewListClicked(v, this.getLayoutPosition(), null, null );
+        mRecyclerViewClickListener.recyclerViewListClicked(v, this.getLayoutPosition());
     }
 
     @Override
     public boolean onLongClick(View v) {
-        mRecyclerViewClickListener.recyclerViewListLongClicked(v, this.getLayoutPosition(), null, null);
+        mRecyclerViewClickListener.recyclerViewListLongClicked(v, this.getLayoutPosition());
         return true;
     }
 
