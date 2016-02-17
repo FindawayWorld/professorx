@@ -116,17 +116,15 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
 
     @Override
     public void update(DownloadEvent downloadEvent) {
-        int startPosition = mLinearLayoutManager.findFirstVisibleItemPosition();
-        int endPosition = mLinearLayoutManager.findLastVisibleItemPosition() + 1;
         if (downloadEvent.code.equals(DownloadEvent.CHAPTER_DOWNLOAD_COMPLETED) && downloadEvent.chapter != null) {
             View view = findViewByPartAndChapter(downloadEvent);
             if (view != null) {
-                final TextView textView = (TextView) view.findViewById(R.id.download_status);
+                final TextView statusView = (TextView) view.findViewById(R.id.download_status);
                 final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
                 ((BookActivity) mContext).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        textView.setText(getText(R.string.downloaded));
+                        statusView.setText(getText(R.string.downloaded));
                         progressBar.setProgress(100);
                     }
                 });
@@ -134,89 +132,86 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
         } else if (downloadEvent.code.equals(DownloadEvent.DELETE_COMPLETE) && downloadEvent.chapter != null) {
             View view = findViewByPartAndChapter(downloadEvent);
             if (view != null) {
-                final TextView textView = (TextView) view.findViewById(R.id.download_status);
+                final TextView statusView = (TextView) view.findViewById(R.id.download_status);
                 final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
                 ((BookActivity) mContext).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        textView.setText(getText(R.string.not_downloaded));
+                        statusView.setText(getText(R.string.not_downloaded));
                         progressBar.setProgress(0);
                     }
                 });
             }
+        } else if (downloadEvent.code.equals(DownloadEvent.DOWNLOAD_STARTED) && downloadEvent.chapter != null) {
+            View view = findViewByPartAndChapter(downloadEvent);
+            if (view != null) {
+                final TextView statusView = (TextView) view.findViewById(R.id.download_status);
+                ((BookActivity) mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        statusView.setText(getText(R.string.downloading).toString());
+                    }
+                });
+            }
         } else if (downloadEvent.code.equals(DownloadEvent.DELETE_COMPLETE) && downloadEvent.chapter == null) {
-
-            for (int x = startPosition; x < endPosition; x++) {
+            int startPosition = mLinearLayoutManager. findFirstVisibleItemPosition();
+            int endPosition = mLinearLayoutManager.findLastVisibleItemPosition();
+            for (int x = startPosition; x <= endPosition; x++) {
                 View view = mChapterListView.findViewHolderForAdapterPosition(x).itemView.findViewById(R.id.chapter_list_view);
                 if (view != null) {
-                    final TextView textView = (TextView) view.findViewById(R.id.download_status);
+                    final TextView statusView = (TextView) view.findViewById(R.id.download_status);
                     final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
                     ((BookActivity) mContext).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            textView.setText(getText(R.string.not_downloaded));
+                            statusView.setText(getText(R.string.not_downloaded));
                             progressBar.setProgress(0);
                         }
                     });
                 }
             }
-        } else if (downloadEvent.code.equals(DownloadEvent.DOWNLOAD_STARTED)) {
-            View view = findViewByPartAndChapter(downloadEvent);
-            if (view != null) {
-                final TextView downloadStatus = (TextView) view.findViewById(R.id.download_status);
-                ((BookActivity) mContext).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        downloadStatus.setText(getText(R.string.downloading).toString());
-                    }
-                });
-            }
         }
     }
 
     public View findViewByPartAndChapter(DownloadEvent downloadEvent) {
-        Log.d(getTag(), "Chapter number is " + downloadEvent.chapter.chapterNumber + ". Part number is " + downloadEvent.chapter.partNumber);
         int startPosition = mLinearLayoutManager.findFirstVisibleItemPosition();
-        int endPosition = mLinearLayoutManager.findLastVisibleItemPosition() +1;
+        int endPosition = mLinearLayoutManager.findLastVisibleItemPosition();
         View view = null;
         Integer chapterNumber, partNumber, deChapterNumber, dePartNumber;
-        for (int x = startPosition; x < endPosition; x++) {
+        for (int x = startPosition; x <= endPosition; x++) {
             view = mChapterListView.findViewHolderForAdapterPosition(x).itemView.findViewById(R.id.chapter_list_view);
-            TextView chapterNumberView = (TextView) view.findViewById(R.id.chapter_number);
-            TextView partNumberView = (TextView) view.findViewById(R.id.part_number);
-            chapterNumber = Integer.parseInt(chapterNumberView.getText().subSequence(15, 16).toString());
-            partNumber = Integer.parseInt(partNumberView.getText().subSequence(14, 15).toString());
-            deChapterNumber = downloadEvent.chapter.chapterNumber;
-            dePartNumber = downloadEvent.chapter.partNumber;
-            if (partNumber.equals(dePartNumber) && chapterNumber.equals(deChapterNumber)) {
-                return view;
+            if (view != null) {
+                TextView chapterNumberView = (TextView) view.findViewById(R.id.chapter_number);
+                TextView partNumberView = (TextView) view.findViewById(R.id.part_number);
+                chapterNumber = Integer.parseInt(chapterNumberView.getText().subSequence(15, 16).toString());
+                partNumber = Integer.parseInt(partNumberView.getText().subSequence(14, 15).toString());
+                deChapterNumber = downloadEvent.chapter.chapterNumber;
+                dePartNumber = downloadEvent.chapter.partNumber;
+                if (partNumber.equals(dePartNumber) && chapterNumber.equals(deChapterNumber)) {
+                    return view;
+                }
             }
         }
         return null;
     }
 
     public View findViewByPartAndChapter(DownloadProgressEvent downloadProgressEvent){
-        Log.d(getTag(), "Chapter number is " + downloadProgressEvent.chapter.chapterNumber + ". Part number is " + downloadProgressEvent.chapter.partNumber);
         int startPosition = mLinearLayoutManager.findFirstVisibleItemPosition();
-        int endPosition = mLinearLayoutManager.findLastVisibleItemPosition() +1;
+        int endPosition = mLinearLayoutManager.findLastVisibleItemPosition();
         View view = null;
         Integer chapterNumber, partNumber, deChapterNumber, dePartNumber;
-        for (int x = startPosition; x < endPosition; x++) {
+        for (int x = startPosition; x <= endPosition; x++) {
             view = mChapterListView.findViewHolderForAdapterPosition(x).itemView.findViewById(R.id.chapter_list_view);
-            TextView chapterNumberView = (TextView) view.findViewById(R.id.chapter_number);
-            TextView partNumberView = (TextView) view.findViewById(R.id.part_number);
-            chapterNumber = Integer.parseInt(chapterNumberView.getText().subSequence(15,16).toString());
-            partNumber = Integer.parseInt(partNumberView.getText().subSequence(14,15).toString());
-            deChapterNumber = downloadProgressEvent.chapter.chapterNumber;
-            dePartNumber = downloadProgressEvent.chapter.partNumber;
-            try {
-                if (partNumber == dePartNumber && chapterNumber == deChapterNumber) {
+            if (view != null) {
+                TextView chapterNumberView = (TextView) view.findViewById(R.id.chapter_number);
+                TextView partNumberView = (TextView) view.findViewById(R.id.part_number);
+                chapterNumber = Integer.parseInt(chapterNumberView.getText().subSequence(15, 16).toString());
+                partNumber = Integer.parseInt(partNumberView.getText().subSequence(14, 15).toString());
+                deChapterNumber = downloadProgressEvent.chapter.chapterNumber;
+                dePartNumber = downloadProgressEvent.chapter.partNumber;
+                if (partNumber.equals(dePartNumber) && chapterNumber.equals(deChapterNumber)) {
                     return view;
                 }
-            }
-            catch (Exception ex)
-            {
-                Log.e(getTag(), "ERROR");
             }
         }
         return null;
