@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.findaway.audioengine.exceptions.AudioEngineException;
 import com.findaway.audioengine.exceptions.ChapterNotFoundException;
 import com.findaway.audioengine.mobile.DownloadEngine;
 import com.findaway.audioengine.model.DownloadStatus;
@@ -20,7 +21,6 @@ import java.util.List;
  */
 public class ChapterContentAdapter extends RecyclerView.Adapter<ChapterViewHolder> {
 
-    private String TAG = "CHAPTER_CONTENT_ADAPTER";
     private List<Chapter> mChapters;
     private static RecyclerViewClickListener mRecyclerViewClickListener;
     private DownloadEngine mDownloadEngine;
@@ -31,6 +31,7 @@ public class ChapterContentAdapter extends RecyclerView.Adapter<ChapterViewHolde
         mRecyclerViewClickListener = recyclerViewClickListener;
         mDownloadEngine = downloadEngine;
     }
+
     @Override
     public ChapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -54,14 +55,20 @@ public class ChapterContentAdapter extends RecyclerView.Adapter<ChapterViewHolde
         holder.chapter_number.setText("Chapter Number " + chapter.chapter_number.toString());
         holder.duration.setText("Duration is : " + chapter.duration.toString());
         holder.part_number.setText("Part Number : " + chapter.part_number.toString());
-
+        Integer progress;
         try {
             DownloadStatus status = mDownloadEngine.getStatus(content.id, chapter.part_number, chapter.chapter_number);
+            try {
+                progress = mDownloadEngine.getProgress(content.id, chapter.part_number, chapter.chapter_number);
+            }
+            catch (AudioEngineException ex){
+                progress = 0;
+            }
             holder.download_status.setText(status.name());
             if (status == DownloadStatus.DOWNLOADED) {
                 holder.download_progress.setProgress(100);
             } else {
-                holder.download_progress.setProgress(0);
+                holder.download_progress.setProgress(progress);
             }
         } catch (ChapterNotFoundException e) {
             holder.download_status.setText(DownloadStatus.NOT_DOWNLOADED.toString());

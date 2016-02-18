@@ -35,7 +35,6 @@ import java.util.ArrayList;
  * Created by agofman on 2/5/16.
  */
 public class BookChapterFragment extends Fragment implements BookView, DownloadListener, RecyclerViewClickListener {
-
     private BookPresenter mBookPresenter;
     private DownloadEngine mDownloadEngine;
     private ChapterContentAdapter mChapterContentAdapter;
@@ -51,10 +50,16 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mDownloadEngine.unregisterDownloadListener(this);
+    }
+
+    @Override
     public void recyclerViewListClicked(View v, int position) {
         ChapterViewHolder chapterViewHolder = (ChapterViewHolder)mChapterListView.findViewHolderForAdapterPosition(position);
         TextView textView = (TextView)chapterViewHolder.itemView.findViewById(R.id.download_status);
-        if (textView.getText().toString().equals(getString(R.string.not_downloaded))) {
+        if (!textView.getText().toString().equals(getString(R.string.downloaded))) {
             mChapter = mChapterContentAdapter.getChapter(position);
             try {
                 mDownloadEngine.download(mContentId, mChapter.part_number, mChapter.chapter_number, null, mAccountId, false, false);
@@ -176,17 +181,17 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     public View findViewByPartAndChapter(DownloadEvent downloadEvent) {
         int startPosition = mLinearLayoutManager.findFirstVisibleItemPosition();
         int endPosition = mLinearLayoutManager.findLastVisibleItemPosition();
-        View view = null;
+        View view;
         Integer chapterNumber, partNumber, deChapterNumber, dePartNumber;
         for (int x = startPosition; x <= endPosition; x++) {
             view = mChapterListView.findViewHolderForAdapterPosition(x).itemView.findViewById(R.id.chapter_list_view);
             if (view != null) {
                 TextView chapterNumberView = (TextView) view.findViewById(R.id.chapter_number);
                 TextView partNumberView = (TextView) view.findViewById(R.id.part_number);
-                chapterNumber = Integer.parseInt(chapterNumberView.getText().subSequence(15, 16).toString());
-                partNumber = Integer.parseInt(partNumberView.getText().subSequence(14, 15).toString());
                 deChapterNumber = downloadEvent.chapter.chapterNumber;
                 dePartNumber = downloadEvent.chapter.partNumber;
+                chapterNumber = Integer.parseInt(chapterNumberView.getText().subSequence(15, chapterNumberView.getText().length()).toString());
+                partNumber = Integer.parseInt(partNumberView.getText().subSequence(14, partNumberView.getText().length()).toString());
                 if (partNumber.equals(dePartNumber) && chapterNumber.equals(deChapterNumber)) {
                     return view;
                 }
@@ -198,17 +203,17 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     public View findViewByPartAndChapter(DownloadProgressEvent downloadProgressEvent){
         int startPosition = mLinearLayoutManager.findFirstVisibleItemPosition();
         int endPosition = mLinearLayoutManager.findLastVisibleItemPosition();
-        View view = null;
+        View view;
         Integer chapterNumber, partNumber, deChapterNumber, dePartNumber;
         for (int x = startPosition; x <= endPosition; x++) {
             view = mChapterListView.findViewHolderForAdapterPosition(x).itemView.findViewById(R.id.chapter_list_view);
             if (view != null) {
                 TextView chapterNumberView = (TextView) view.findViewById(R.id.chapter_number);
                 TextView partNumberView = (TextView) view.findViewById(R.id.part_number);
-                chapterNumber = Integer.parseInt(chapterNumberView.getText().subSequence(15, 16).toString());
-                partNumber = Integer.parseInt(partNumberView.getText().subSequence(14, 15).toString());
                 deChapterNumber = downloadProgressEvent.chapter.chapterNumber;
                 dePartNumber = downloadProgressEvent.chapter.partNumber;
+                chapterNumber = Integer.parseInt(chapterNumberView.getText().subSequence(15, chapterNumberView.getText().length()).toString());
+                partNumber = Integer.parseInt(partNumberView.getText().subSequence(14, partNumberView.getText().length()).toString());
                 if (partNumber.equals(dePartNumber) && chapterNumber.equals(deChapterNumber)) {
                     return view;
                 }

@@ -14,28 +14,13 @@ import com.findaway.audioengine.sample.R;
 /**
  * Created by agofman on 2/8/16.
  */
-public class BookActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class BookActivity extends AppCompatActivity {
     public static final String EXTRA_CONTENT_ID = "EXTRA_CONTENT_ID";
     public static final String EXTRA_SESSION_ID = "EXTRA_SESSION_ID";
     public static final String EXTRA_ACCOUNT_ID = "EXTRA_ACCOUNT_ID";
     private String mContentId, mSessionId, mAccountId;
     private BookPagerAdapter mCustomPagerAdapter;
     private Toolbar mToolbar;
-
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        mToolbar.setTitle(mCustomPagerAdapter.getPageTitle(position).toString());
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +35,22 @@ public class BookActivity extends AppCompatActivity implements ViewPager.OnPageC
         mAccountId = getIntent().getStringExtra(EXTRA_ACCOUNT_ID);
 
         ViewPager viewPager = (ViewPager)findViewById(R.id.book_pager);
-        viewPager.addOnPageChangeListener(this);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                mToolbar.setTitle(mCustomPagerAdapter.getPageTitle(position).toString());
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         mCustomPagerAdapter = new BookPagerAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(mCustomPagerAdapter);
