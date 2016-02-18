@@ -31,6 +31,7 @@ import com.findaway.audioengine.sample.audiobooks.Content;
 import com.findaway.audioengine.sample.audiobooks.RecyclerViewClickListener;
 
 import java.util.ArrayList;
+
 /**
  * Created by agofman on 2/5/16.
  */
@@ -57,8 +58,8 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
 
     @Override
     public void recyclerViewListClicked(View v, int position) {
-        ChapterViewHolder chapterViewHolder = (ChapterViewHolder)mChapterListView.findViewHolderForAdapterPosition(position);
-        TextView textView = (TextView)chapterViewHolder.itemView.findViewById(R.id.download_status);
+        ChapterViewHolder chapterViewHolder = (ChapterViewHolder) mChapterListView.findViewHolderForAdapterPosition(position);
+        TextView textView = (TextView) chapterViewHolder.itemView.findViewById(R.id.download_status);
         if (!textView.getText().toString().equals(getString(R.string.downloaded))) {
             mChapter = mChapterContentAdapter.getChapter(position);
             try {
@@ -66,21 +67,19 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
             } catch (AudioEngineException ex) {
                 Log.e(getTag(), "Problem while downloading content");
             }
-        }
-        else {
+        } else {
             Toast.makeText(getActivity(), "File Already Downloaded", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void recyclerViewListLongClicked(View v, int position) {
-        ChapterViewHolder chapterViewHolder = (ChapterViewHolder)mChapterListView.findViewHolderForAdapterPosition(position);
-        TextView textView = (TextView)chapterViewHolder.itemView.findViewById(R.id.download_status);
+        ChapterViewHolder chapterViewHolder = (ChapterViewHolder) mChapterListView.findViewHolderForAdapterPosition(position);
+        TextView textView = (TextView) chapterViewHolder.itemView.findViewById(R.id.download_status);
         if (textView.getText().toString().equals(getString(R.string.downloaded))) {
             mChapter = mChapterContentAdapter.getChapter(position);
             mDownloadEngine.delete(mContentId, mChapter.part_number, mChapter.chapter_number);
-        }
-        else {
+        } else {
             Toast.makeText(getActivity(), "No file found to delete", Toast.LENGTH_SHORT).show();
         }
     }
@@ -102,8 +101,7 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
                 Log.e(getTag(), "Download engine error.");
             }
             mBookPresenter.getContent(sessionId, mContentId);
-        }
-        else {
+        } else {
             Log.e(getTag(), "Session Id was null. Not getting book chapter list.");
         }
     }
@@ -117,6 +115,23 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     @Override
     public void showError(String errorMessage) {
         Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void update(final DownloadProgressEvent downloadProgressEvent) {
+        View view = findViewByPartAndChapter(downloadProgressEvent);
+        if (view != null) {
+            final TextView textView = (TextView) view.findViewById(R.id.download_status);
+            final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+            ((BookActivity) mContext).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    textView.setText(downloadProgressEvent.chapterPercentage + " %");
+                    progressBar.setProgress(downloadProgressEvent.chapterPercentage);
+                }
+            });
+        }
     }
 
     @Override
@@ -159,7 +174,7 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
                 });
             }
         } else if (downloadEvent.code.equals(DownloadEvent.DELETE_COMPLETE) && downloadEvent.chapter == null) {
-            int startPosition = mLinearLayoutManager. findFirstVisibleItemPosition();
+            int startPosition = mLinearLayoutManager.findFirstVisibleItemPosition();
             int endPosition = mLinearLayoutManager.findLastVisibleItemPosition();
             for (int x = startPosition; x <= endPosition; x++) {
                 View view = mChapterListView.findViewHolderForAdapterPosition(x).itemView.findViewById(R.id.chapter_list_view);
@@ -200,7 +215,7 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
         return null;
     }
 
-    public View findViewByPartAndChapter(DownloadProgressEvent downloadProgressEvent){
+    public View findViewByPartAndChapter(DownloadProgressEvent downloadProgressEvent) {
         int startPosition = mLinearLayoutManager.findFirstVisibleItemPosition();
         int endPosition = mLinearLayoutManager.findLastVisibleItemPosition();
         View view;
@@ -222,30 +237,13 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
         return null;
     }
 
-    @Override
-    public void update(final DownloadProgressEvent downloadProgressEvent) {
-        View view = findViewByPartAndChapter(downloadProgressEvent);
-        if (view != null) {
-            final TextView textView = (TextView) view.findViewById(R.id.download_status);
-            final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-            ((BookActivity) mContext).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    textView.setText(downloadProgressEvent.chapterPercentage + " %");
-                    progressBar.setProgress(downloadProgressEvent.chapterPercentage);
-                }
-            });
-        }
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getTitle() == "Download All" ) {
+        if (item.getTitle() == "Download All") {
             try {
                 mDownloadEngine.download(mContentId, mContent.chapters.get(0).part_number, mContent.chapters.get(0).chapter_number, null, mAccountId, true, true);
-            }
-            catch (AudioEngineException ex)
-            {
+            } catch (AudioEngineException ex) {
                 Log.e(getTag(), "Problem while downloading content");
             }
         } else if (item.getTitle() == "Delete All") {
@@ -256,23 +254,23 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
 
     @Override
     public void error(DownloadError downloadError) {
-        if(downloadError.code.equals(DownloadError.UNAUTHORIZED)) {
+        if (downloadError.code.equals(DownloadError.UNAUTHORIZED)) {
 
             Toast.makeText(getActivity(), "Permission denied. Please check username and password.", Toast.LENGTH_SHORT).show();
 
-        } else if(downloadError.code.equals(DownloadError.FORBIDDEN)) {
+        } else if (downloadError.code.equals(DownloadError.FORBIDDEN)) {
 
             Toast.makeText(getActivity(), "You do not have access to this book.", Toast.LENGTH_SHORT).show();
 
-        } else if(downloadError.code.equals(DownloadError.CONTENT_NOT_FOUND)) {
+        } else if (downloadError.code.equals(DownloadError.CONTENT_NOT_FOUND)) {
 
             Toast.makeText(getActivity(), "Unable to find requested book.", Toast.LENGTH_SHORT).show();
 
-        } else if(downloadError.code.equals(DownloadError.CHAPTER_NOT_FOUND)) {
+        } else if (downloadError.code.equals(DownloadError.CHAPTER_NOT_FOUND)) {
 
             Toast.makeText(getActivity(), "Invalid chapter requested.", Toast.LENGTH_SHORT).show();
 
-        } else if(downloadError.code.equals(DownloadError.NETWORK_ERROR)) {
+        } else if (downloadError.code.equals(DownloadError.NETWORK_ERROR)) {
 
             Toast.makeText(getActivity(), "A network error has occurred. Please check you connection and try again.", Toast.LENGTH_SHORT).show();
         }
@@ -283,7 +281,7 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chapter, container, false);
         mLinearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        mChapterListView = (RecyclerView)view.findViewById(R.id.chapter_list);
+        mChapterListView = (RecyclerView) view.findViewById(R.id.chapter_list);
         mChapterListView.setLayoutManager(mLinearLayoutManager);
 
         mChapterContentAdapter = new ChapterContentAdapter(new ArrayList<Chapter>(), this, mDownloadEngine);
