@@ -12,7 +12,6 @@ import com.findaway.audioengine.model.DownloadStatus;
 import com.findaway.audioengine.sample.R;
 import com.findaway.audioengine.sample.audiobooks.Chapter;
 import com.findaway.audioengine.sample.audiobooks.Content;
-import com.findaway.audioengine.sample.audiobooks.RecyclerViewClickListener;
 
 import java.util.List;
 

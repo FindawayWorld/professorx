@@ -1,4 +1,4 @@
-package com.findaway.audioengine.sample.audiobooks;
+package com.findaway.audioengine.sample.book;
 
 import android.view.View;
 import android.widget.ProgressBar;

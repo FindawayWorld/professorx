@@ -6,7 +6,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.findaway.audioengine.sample.R;
-import com.findaway.audioengine.sample.audiobooks.RecyclerViewClickListener;
 
 /**
  * Created by agofman on 2/9/16.
