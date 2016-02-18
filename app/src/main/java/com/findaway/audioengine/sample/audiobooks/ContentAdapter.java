@@ -17,34 +17,25 @@ import java.util.List;
  */
 public class ContentAdapter extends RecyclerView.Adapter<ListViewHolder> {
 
-    private static final String TAG = "ContentAdapter";
-
+    private static View.OnClickListener mOnClickListener;
     private Context mContext;
     private List<Content> mContent;
-    private static RecyclerViewClickListener mRecyclerViewClickListener;
 
-    public ContentAdapter(Context context, List<Content> content, RecyclerViewClickListener recyclerViewClickListener) {
-
+    public ContentAdapter(Context context, List<Content> content, View.OnClickListener onClickListener) {
         mContext = context;
         mContent = content;
-        mRecyclerViewClickListener = recyclerViewClickListener;
+        mOnClickListener = onClickListener;
     }
 
     @Override
     public ListViewHolder onCreateViewHolder(ViewGroup parent, int i) {
-
-        Log.d(TAG, "Creating view holder.");
-
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.library_list_item, parent, false);
-        return new ListViewHolder(view, mRecyclerViewClickListener);
+        return new ListViewHolder(view, mOnClickListener);
     }
 
     @Override
     public void onBindViewHolder(ListViewHolder viewHolder, final int position) {
-
-        Log.d(TAG, "Binding view holder!");
-
         final Content content = mContent.get(position);
         viewHolder.title.setText(content.title);
         viewHolder.author.setText(content.author.toString());
@@ -55,24 +46,11 @@ public class ContentAdapter extends RecyclerView.Adapter<ListViewHolder> {
 
     @Override
     public int getItemCount() {
-
         return mContent.size();
     }
 
     public void add(Content content) {
-
         mContent.add(content);
         notifyItemInserted(mContent.size() - 1);
-    }
-
-    public String getContentId(int position){
-        return mContent.get(position).id;
-
-    }
-
-    public void remove(int position) {
-
-        mContent.remove(position);
-        notifyItemRemoved(position);
     }
 }

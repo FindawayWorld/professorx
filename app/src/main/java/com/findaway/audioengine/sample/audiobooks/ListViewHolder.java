@@ -10,31 +10,24 @@ import com.findaway.audioengine.sample.R;
 /**
  * Created by agofman on 2/2/16.
  */
-public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
     TextView title;
     TextView author;
     ImageView cover;
     TextView id;
-    RecyclerViewClickListener mRecyclerViewClickListener;
+    private View.OnClickListener mOnClickListener;
 
     @Override
     public void onClick(View v) {
-        mRecyclerViewClickListener.recyclerViewListClicked(v, this.getLayoutPosition());
+        mOnClickListener.onClick(v);
     }
 
-    @Override
-    public boolean onLongClick(View v) {
-        mRecyclerViewClickListener.recyclerViewListLongClicked(v, this.getLayoutPosition());
-        return true;
-    }
-
-    public ListViewHolder(View itemView, RecyclerViewClickListener recyclerViewClickListener) {
+    public ListViewHolder(View itemView, View.OnClickListener onClickListener) {
         super(itemView);
 
-        mRecyclerViewClickListener = recyclerViewClickListener;
+        mOnClickListener = onClickListener;
         itemView.setOnClickListener(this);
-        itemView.setOnLongClickListener(this);
         title = (TextView)itemView.findViewById(R.id.title);
         author = (TextView)itemView.findViewById(R.id.author);
         cover = (ImageView)itemView.findViewById(R.id.cover);
