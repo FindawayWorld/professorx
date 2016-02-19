@@ -34,7 +34,7 @@ import java.util.ArrayList;
 /**
  * Created by agofman on 2/5/16.
  */
-public class BookChapterFragment extends Fragment implements BookView, DownloadListener, RecyclerViewClickListener {
+public class ChapterFragment extends Fragment implements BookView, DownloadListener, RecyclerViewClickListener {
     private BookPresenter mBookPresenter;
     private DownloadEngine mDownloadEngine;
     private ChapterContentAdapter mChapterContentAdapter;
@@ -45,7 +45,7 @@ public class BookChapterFragment extends Fragment implements BookView, DownloadL
     private RecyclerView mChapterListView;
     private LinearLayoutManager mLinearLayoutManager;
 
-    public BookChapterFragment() {
+    public ChapterFragment() {
         mBookPresenter = new BookPresenterImpl(this);
     }
 

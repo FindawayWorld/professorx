@@ -12,7 +12,7 @@ import com.findaway.audioengine.sample.R;
 /**
  * Created by agofman on 2/8/16.
  */
-public class BookDetailsFragment extends Fragment {
+public class DetailsFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

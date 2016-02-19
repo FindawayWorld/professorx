@@ -70,9 +70,9 @@ public class BookActivity extends AppCompatActivity {
 
             Fragment fragment;
             if (position == 0) {
-                fragment = new BookDetailsFragment();
+                fragment = new DetailsFragment();
             } else {
-                fragment = new BookChapterFragment();
+                fragment = new ChapterFragment();
             }
             Bundle args = new Bundle();
             args.putString(EXTRA_CONTENT_ID, mContentId);
