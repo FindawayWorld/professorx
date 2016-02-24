@@ -197,6 +197,7 @@ public class ChapterFragment extends Fragment implements BookView, DownloadListe
         int endPosition = mLinearLayoutManager.findLastVisibleItemPosition();
         View view;
         Integer chapterNumber, partNumber, deChapterNumber, dePartNumber;
+        String deContentId;
         for (int x = startPosition; x <= endPosition; x++) {
             view = mChapterListView.findViewHolderForAdapterPosition(x).itemView.findViewById(R.id.chapter_list_view);
             if (view != null) {
@@ -204,9 +205,10 @@ public class ChapterFragment extends Fragment implements BookView, DownloadListe
                 TextView partNumberView = (TextView) view.findViewById(R.id.part_number);
                 deChapterNumber = downloadEvent.chapter.chapterNumber;
                 dePartNumber = downloadEvent.chapter.partNumber;
+                deContentId = downloadEvent.chapter.contentId;
                 chapterNumber = Integer.parseInt(chapterNumberView.getText().subSequence(15, chapterNumberView.getText().length()).toString());
                 partNumber = Integer.parseInt(partNumberView.getText().subSequence(14, partNumberView.getText().length()).toString());
-                if (partNumber.equals(dePartNumber) && chapterNumber.equals(deChapterNumber)) {
+                if (partNumber.equals(dePartNumber) && chapterNumber.equals(deChapterNumber) && deContentId.equals(mContentId)) {
                     return view;
                 }
             }
@@ -219,6 +221,7 @@ public class ChapterFragment extends Fragment implements BookView, DownloadListe
         int endPosition = mLinearLayoutManager.findLastVisibleItemPosition();
         View view;
         Integer chapterNumber, partNumber, deChapterNumber, dePartNumber;
+        String deContentId;
         for (int x = startPosition; x <= endPosition; x++) {
             view = mChapterListView.findViewHolderForAdapterPosition(x).itemView.findViewById(R.id.chapter_list_view);
             if (view != null) {
@@ -226,9 +229,10 @@ public class ChapterFragment extends Fragment implements BookView, DownloadListe
                 TextView partNumberView = (TextView) view.findViewById(R.id.part_number);
                 deChapterNumber = downloadProgressEvent.chapter.chapterNumber;
                 dePartNumber = downloadProgressEvent.chapter.partNumber;
+                deContentId = downloadProgressEvent.chapter.contentId;
                 chapterNumber = Integer.parseInt(chapterNumberView.getText().subSequence(15, chapterNumberView.getText().length()).toString());
                 partNumber = Integer.parseInt(partNumberView.getText().subSequence(14, partNumberView.getText().length()).toString());
-                if (partNumber.equals(dePartNumber) && chapterNumber.equals(deChapterNumber)) {
+                if (partNumber.equals(dePartNumber) && chapterNumber.equals(deChapterNumber) && deContentId.equals(mContentId)) {
                     return view;
                 }
             }
