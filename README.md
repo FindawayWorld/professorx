@@ -95,7 +95,19 @@ public class Authority {
 
 Now we have the Audio Engine SDK all set up. The next thing we need to do is enable some on click events
 in our chapter fragment so that when a user clicks on one of the chapters we can initiate the download
-of that chapter. In this tutorial we use a custom click listener class so that we can handle the clicks in the chapter fragment.
+of that chapter. To start a download we use the download engine object. Also in order to use the download 
+engine we need to initialize audio engine and register the fragment as the download listener for download engine. 
+We can do this in the onCreate of our chapter fragment. 
+
+```Java
+public void onCreate(Bundle savedInstanceState) {
+...
+    AudioEngine.init(getActivity(), sessionId, LogLevel.WARNING);
+    mDownloadEngine = AudioEngine.getDownloadEngine();
+    mDownloadEngine.registerDownloadListener(this);
+```
+
+In this tutorial we use a custom click listener class so that we can handle the clicks in the chapter fragment.
 We set the chapter fragment as the custom listener, and pass it to our view holder where we can set the chapter
 fragment as the listener for each chapter view. 
 
@@ -126,7 +138,8 @@ fragment as the listener for each chapter view.
     }
 ```
 
-Once this is done, now we can handle our on click events in our fragment.
+Once this is done, now we can handle our on click events in our fragment. In these events we will use 
+the download engine object we created to make the download and delete calls for a single file.
 
 ```Java
 @Override
@@ -159,7 +172,8 @@ public void recyclerViewListLongClicked(View v, int position) {
 ```
 
 We will also create an options menu and some items so that we can handle bulk downloading and deleting 
-of chapters. In the on create of our chapter fragment we need to set that we have an options menu.
+of chapters. This is just one way to handle it, but there are many ways of doing this. In the on 
+create of our chapter fragment we need to set that we have an options menu.
 
 ```Java
 setHasOptionsMenu(true);
@@ -167,7 +181,8 @@ setHasOptionsMenu(true);
 
 Once this is done, this will add a few more methods to the activity lifecycle. We can set the options
 items by overriding the on create options menu and then handle the different options selections by
-overriding the on options item selected.  
+overriding the on options item selected. Once we have identified which option is selected we can make the 
+bulk download or bulk delete call.
 
 ```Java
 @Override
@@ -194,8 +209,8 @@ public boolean onOptionsItemSelected(MenuItem item) {
 
 Now we have a view that displays the chapters in the book we chose. We are also able to start a download
 or a delete of one or all of the chapters. That last part of this tutorial is to handle the download
-events that are returned from the download and delete methods so that we can display download progress
-to the user. We do this by implementing the Audio Engine download listener in our fragment.
+events that are returned from the download and delete methods so that the UI can respond to the user. 
+We do this by implementing the Audio Engine download listener in our fragment.
 
 ```Java
 ...
