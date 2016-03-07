@@ -57,6 +57,10 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
         presenter = new LoginPresenterImpl(this);
 
+        if (!mSharedPreferences.getString(AUDIO_ENGINE_SESSION_KEY, "").equals("") ) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import java.util.List;
  */
 public class LibraryFragment extends Fragment implements AudiobookView, View.OnClickListener {
 
+    static String TAG = "Library Fragment";
     private AudiobookPresenter mAudiobookPresenter;
     private ContentAdapter mContentAdapter;
     private String mSessionId;
@@ -32,13 +34,6 @@ public class LibraryFragment extends Fragment implements AudiobookView, View.OnC
 
     public LibraryFragment() {
         mAudiobookPresenter = new AudiobookPresenterImpl(this);
-    }
-
-    public static LibraryFragment newInstance() {
-        LibraryFragment fragment = new LibraryFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -55,7 +50,11 @@ public class LibraryFragment extends Fragment implements AudiobookView, View.OnC
     @Override
     public void setAudiobookList(List<Content> audiobookList) {
         for (Content content : audiobookList) {
-            mContentAdapter.add(content);
+            try {
+                mContentAdapter.add(content);
+            } catch (Exception ex) {
+                Log.e(TAG, "Failed to get back content.");
+            }
         }
     }
 

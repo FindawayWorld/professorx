@@ -1,6 +1,7 @@
 package com.findaway.audioengine.sample.book;
 
 import android.content.Context;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.findaway.audioengine.DownloadListener;
-import com.findaway.audioengine.config.LogLevel;
 import com.findaway.audioengine.exceptions.AudioEngineException;
 import com.findaway.audioengine.mobile.AudioEngine;
 import com.findaway.audioengine.mobile.DownloadEngine;
@@ -35,6 +35,8 @@ import java.util.ArrayList;
  * Created by agofman on 2/5/16.
  */
 public class ChapterFragment extends Fragment implements BookView, DownloadListener, RecyclerViewClickListener {
+
+    static String TAG = "Chapter Fragment";
     private BookPresenter mBookPresenter;
     private DownloadEngine mDownloadEngine;
     private ChapterContentAdapter mChapterContentAdapter;
@@ -47,12 +49,6 @@ public class ChapterFragment extends Fragment implements BookView, DownloadListe
 
     public ChapterFragment() {
         mBookPresenter = new BookPresenterImpl(this);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mDownloadEngine.unregisterDownloadListener(this);
     }
 
     @Override
@@ -93,9 +89,8 @@ public class ChapterFragment extends Fragment implements BookView, DownloadListe
         mAccountId = getArguments().getString(BookActivity.EXTRA_ACCOUNT_ID);
         if (sessionId != null) {
             try {
-                AudioEngine.init(getActivity(), sessionId, LogLevel.WARNING);
                 mDownloadEngine = AudioEngine.getDownloadEngine();
-                mDownloadEngine.registerDownloadListener(this);
+
             } catch (AudioEngineException e) {
                 Log.e(getTag(), "Download engine error.");
             }
@@ -195,11 +190,16 @@ public class ChapterFragment extends Fragment implements BookView, DownloadListe
     public View findViewByPartAndChapter(DownloadEvent downloadEvent) {
         int startPosition = mLinearLayoutManager.findFirstVisibleItemPosition();
         int endPosition = mLinearLayoutManager.findLastVisibleItemPosition();
-        View view;
+        View view = null;
         Integer chapterNumber, partNumber, deChapterNumber, dePartNumber;
         String deContentId;
         for (int x = startPosition; x <= endPosition; x++) {
-            view = mChapterListView.findViewHolderForAdapterPosition(x).itemView.findViewById(R.id.chapter_list_view);
+            try {
+                view = mChapterListView.findViewHolderForAdapterPosition(x).itemView.findViewById(R.id.chapter_list_view);
+            }
+            catch (NullPointerException ex) {
+                Log.e(TAG, "Couldn't find view.");
+            }
             if (view != null) {
                 TextView chapterNumberView = (TextView) view.findViewById(R.id.chapter_number);
                 TextView partNumberView = (TextView) view.findViewById(R.id.part_number);
@@ -219,11 +219,16 @@ public class ChapterFragment extends Fragment implements BookView, DownloadListe
     public View findViewByPartAndChapter(DownloadProgressEvent downloadProgressEvent) {
         int startPosition = mLinearLayoutManager.findFirstVisibleItemPosition();
         int endPosition = mLinearLayoutManager.findLastVisibleItemPosition();
-        View view;
+        View view = null;
         Integer chapterNumber, partNumber, deChapterNumber, dePartNumber;
         String deContentId;
         for (int x = startPosition; x <= endPosition; x++) {
-            view = mChapterListView.findViewHolderForAdapterPosition(x).itemView.findViewById(R.id.chapter_list_view);
+            try {
+                view = mChapterListView.findViewHolderForAdapterPosition(x).itemView.findViewById(R.id.chapter_list_view);
+            }
+            catch (NullPointerException ex) {
+                Log.e(TAG, "Couldn't find view.");
+            }
             if (view != null) {
                 TextView chapterNumberView = (TextView) view.findViewById(R.id.chapter_number);
                 TextView partNumberView = (TextView) view.findViewById(R.id.part_number);
@@ -240,6 +245,18 @@ public class ChapterFragment extends Fragment implements BookView, DownloadListe
         return null;
     }
 
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mDownloadEngine.unregisterDownloadListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mDownloadEngine.registerDownloadListener(this);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -289,7 +306,14 @@ public class ChapterFragment extends Fragment implements BookView, DownloadListe
 
         mChapterContentAdapter = new ChapterContentAdapter(new ArrayList<Chapter>(), this, mDownloadEngine);
         mChapterListView.setAdapter(mChapterContentAdapter);
+        mDownloadEngine.registerDownloadListener(this);
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mDownloadEngine.unregisterDownloadListener(this);
     }
 
     @Override

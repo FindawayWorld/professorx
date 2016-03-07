@@ -24,9 +24,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         toolbar.setTitle("Library");
 
-        Fragment fragment = LibraryFragment.newInstance();
+        Fragment fragment = new LibraryFragment();
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().addToBackStack(null).replace(R.id.contentFrame, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.contentFrame, fragment).commit();
     }
 
     @Override
