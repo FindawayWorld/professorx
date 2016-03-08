@@ -12,11 +12,16 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.findaway.audioengine.PlaybackListener;
 import com.findaway.audioengine.exceptions.AudioEngineException;
 import com.findaway.audioengine.mobile.AudioEngine;
 import com.findaway.audioengine.mobile.DownloadEngine;
 import com.findaway.audioengine.mobile.PlaybackEngine;
+import com.findaway.audioengine.model.PlaybackError;
+import com.findaway.audioengine.model.PlaybackEvent;
+import com.findaway.audioengine.model.PlaybackProgressEvent;
 import com.findaway.audioengine.sample.R;
 import com.findaway.audioengine.sample.audiobooks.Content;
 import com.squareup.picasso.Picasso;
@@ -24,8 +29,9 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by agofman on 2/8/16.
  */
-public class DetailsFragment extends Fragment implements BookView, View.OnClickListener {
+public class DetailsFragment extends Fragment implements BookView, View.OnClickListener, PlaybackListener {
 
+    static String TAG = "Details Fragment";
     private BookPresenter mBookPresenter;
     private String mContentId, mAccountId;
     private DownloadEngine mDownloadEngine;
@@ -36,14 +42,10 @@ public class DetailsFragment extends Fragment implements BookView, View.OnClickL
     ImageView cover;
     private FrameLayout mPlayerLayout;
 
-    public DetailsFragment() {
-        mBookPresenter = new BookPresenterImpl(this);
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mBookPresenter = new BookPresenterImpl(this);
         String sessionId = getArguments().getString(BookActivity.EXTRA_SESSION_ID);
         mContentId = getArguments().getString(BookActivity.EXTRA_CONTENT_ID);
         mAccountId = getArguments().getString(BookActivity.EXTRA_ACCOUNT_ID);
@@ -113,13 +115,44 @@ public class DetailsFragment extends Fragment implements BookView, View.OnClickL
         } else if (v.getId() == R.id.play) {
             if (playButton.getText().equals("Play")) {
                 mPlaybackEngine.play(mAccountId, null, mContentId, mContent.chapters.get(0).part_number, mContent.chapters.get(0).chapter_number, 0);
+                mPlaybackEngine.registerPlaybackListener(this);
                 mPlayerLayout.setVisibility(View.VISIBLE);
                 playButton.setText("Stop");
             } else if ( playButton.getText().equals("Stop")) {
                 mPlaybackEngine.stop();
+                mPlaybackEngine.unregisterPlaybackListener(this);
                 mPlayerLayout.setVisibility(View.GONE);
                 playButton.setText("Play");
             }
         }
+    }
+
+    @Override
+    public void error(PlaybackError playbackError) {
+        Log.e(TAG, "Playback failed: " + playbackError.message);
+
+        Log.e(TAG, "Playback failed: " + playbackError.code + " - " + playbackError.message);
+
+        if (playbackError.code.equals(PlaybackError.CONTENT_NOT_FOUND)) {
+            Toast.makeText(getActivity(), "Playback error: " + playbackError.code + " - Content not found.", Toast.LENGTH_SHORT).show();
+        } else if (playbackError.code.equals(PlaybackError.CHAPTER_NOT_FOUND)) {
+            Toast.makeText(getActivity(), "Playback error: " + playbackError.code + " - Chapter not found.", Toast.LENGTH_SHORT).show();
+        } else if (playbackError.code.equals(PlaybackError.UNAUTHORIZED)) {
+            Toast.makeText(getActivity(), "Playback error: " + playbackError.code + " - User does not have permission. Check credentials.", Toast.LENGTH_SHORT).show();
+        } else if (playbackError.code.equals(PlaybackError.FORBIDDEN)) {
+            Toast.makeText(getActivity(), "Playback error: " + playbackError.code + " - Account does not have permission.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), "Playback error: " + playbackError.code + " - Not curently handled in sample app.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void update(PlaybackProgressEvent playbackProgressEvent) {
+
+    }
+
+    @Override
+    public void update(PlaybackEvent playbackEvent) {
+
     }
 }

@@ -28,5 +28,8 @@
     <string name="publisher">Publisher :</string>
     <string name="size">Download Size :</string>
     <string name="runtime">Runtime :</string>
+    <string name="book_title">Book Title</string>
+    <string name="chapter">Chapter</string>
+    <string name="play_button">Play Button</string>
 
 </resources>

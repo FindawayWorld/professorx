@@ -5,36 +5,67 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:layout_weight="2">
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/barTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
-            android:text="Book Title"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="10">
 
-        <TextView
-            android:id="@+id/barChapter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/barTitle"
-            android:text="Chapter 1"/>
+            <TextView
+                android:id="@+id/barTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="@string/book_title"/>
 
-        <ImageButton
-            android:id="@+id/barControl"
-            android:layout_alignParentRight="true"
-            android:src=""
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/barChapter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="@string/chapter"/>
+        </LinearLayout>
 
-    </RelativeLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_weight="3">
+
+            <ImageButton
+                android:id="@+id/barBack"
+                android:src="@drawable/ic_action_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:contentDescription="@string/play_button"/>
+
+            <ImageButton
+                android:id="@+id/barPlay"
+                android:src="@drawable/ic_action_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:contentDescription="@string/play_button"/>
+
+            <ImageButton
+                android:id="@+id/barForward"
+                android:src="@drawable/ic_action_forward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:contentDescription="@string/play_button"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/info"
@@ -44,17 +75,15 @@
         android:paddingBottom="2dp"
         android:gravity="center|center_horizontal"
         android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_weight="1">
+        android:weightSum="1">
 
         <TextView
             android:id="@+id/played"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="2dp"
-            android:text="5:50"
+            android:text="00:00"
             android:textSize="12sp"
+            android:padding="2dp"
             android:textStyle="bold"/>
 
         <LinearLayout
@@ -67,8 +96,7 @@
             <SeekBar
                 android:id="@+id/seekBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
 
@@ -76,10 +104,9 @@
             android:id="@+id/duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="10dp"
-            android:text="10:00"
+            android:text="00:00"
             android:textSize="12sp"
+            android:padding="2dp"
             android:textStyle="bold"/>
 
     </LinearLayout>

@@ -47,10 +47,6 @@ public class ChapterFragment extends Fragment implements BookView, DownloadListe
     private RecyclerView mChapterListView;
     private LinearLayoutManager mLinearLayoutManager;
 
-    public ChapterFragment() {
-        mBookPresenter = new BookPresenterImpl(this);
-    }
-
     @Override
     public void recyclerViewListClicked(View v, int position) {
         ChapterViewHolder chapterViewHolder = (ChapterViewHolder) mChapterListView.findViewHolderForAdapterPosition(position);
@@ -82,6 +78,7 @@ public class ChapterFragment extends Fragment implements BookView, DownloadListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBookPresenter = new BookPresenterImpl(this);
         setHasOptionsMenu(true);
         mContext = getActivity();
         mContentId = getArguments().getString(BookActivity.EXTRA_CONTENT_ID);
