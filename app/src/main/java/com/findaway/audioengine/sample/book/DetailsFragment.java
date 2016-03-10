@@ -1,5 +1,7 @@
 package com.findaway.audioengine.sample.book;
 
+import android.content.Context;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -82,6 +84,14 @@ public class DetailsFragment extends Fragment implements BookView, View.OnClickL
         playButton.setOnClickListener(this);
         downloadButton = (Button) view.findViewById(R.id.download);
         downloadButton.setOnClickListener(this);
+
+        AudioManager manager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+        if (manager.isMusicActive()) {
+            playButton.setText("Stop");
+        } else {
+            playButton.setText("Play");
+        }
+
         return view;
     }
 
