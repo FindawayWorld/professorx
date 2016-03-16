@@ -14,6 +14,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="MR_IMAGE_COVER_BASE">http://images.findawayworld.com/v1/image/cover/</string>
     <string name="MR_IMAGE_CONTENT_LIST_PARAMS">\?width=140&amp;quality=80</string>
+    <string name="MR_IMAGE_PARAM">\?width=800&amp;quality=60</string>
     <string name="chapter_number">Chapter number</string>
     <string name="part_number">Part Number</string>
     <string name="duration">duration</string>

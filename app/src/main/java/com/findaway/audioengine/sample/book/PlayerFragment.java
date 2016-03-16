@@ -22,35 +22,26 @@ import com.findaway.audioengine.model.PlaybackError;
 import com.findaway.audioengine.model.PlaybackEvent;
 import com.findaway.audioengine.model.PlaybackProgressEvent;
 import com.findaway.audioengine.sample.R;
-import com.findaway.audioengine.sample.audiobooks.Chapter;
-import com.findaway.audioengine.sample.audiobooks.Content;
+
+import java.util.Locale;
 
 /**
  * Created by agofman on 3/7/16.
  */
-public class PlayerFragment extends Fragment implements View.OnClickListener, PlaybackListener, BookView, SeekBar.OnSeekBarChangeListener {
+public class PlayerFragment extends Fragment implements View.OnClickListener, PlaybackListener, SeekBar.OnSeekBarChangeListener {
 
     static String TAG = "Player Fragment";
     ImageButton playButton, backButton, forwardButton;
     private PlaybackEngine mPlaybackEngine;
-    private String mSessionId, mContentId, mAccountId;
     TextView mTitle, mChapter, mPlayed, mDuration;
     SeekBar mSeekBar;
     PlaybackProgressEvent mPlaybackProgressEvent;
-    PlaybackEvent mPlaybackEvent;
     private Handler uiHandler;
-    private Content mContent;
-    int mSeekTo;
+    int mProgress;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        BookPresenter bookPresenter = new BookPresenterImpl(this);
-
-        mSessionId = getArguments().getString(BookActivity.EXTRA_SESSION_ID);
-        mContentId = getArguments().getString(BookActivity.EXTRA_CONTENT_ID);
-        mAccountId = getArguments().getString(BookActivity.EXTRA_ACCOUNT_ID);
 
         try {
             mPlaybackEngine = AudioEngine.getPlaybackEngine();
@@ -58,8 +49,6 @@ public class PlayerFragment extends Fragment implements View.OnClickListener, Pl
         } catch (AudioEngineException e) {
             Log.e(TAG, "Playback engine error.");
         }
-
-        bookPresenter.getContent(mSessionId, mContentId);
     }
 
     @Nullable
@@ -71,10 +60,8 @@ public class PlayerFragment extends Fragment implements View.OnClickListener, Pl
 
         playButton = (ImageButton) view.findViewById(R.id.barPlay);
         playButton.setOnClickListener(this);
-
         backButton = (ImageButton) view.findViewById(R.id.barBack);
         backButton.setOnClickListener(this);
-
         forwardButton = (ImageButton) view.findViewById(R.id.barForward);
         forwardButton.setOnClickListener(this);
 
@@ -85,9 +72,6 @@ public class PlayerFragment extends Fragment implements View.OnClickListener, Pl
         mSeekBar = (SeekBar) view.findViewById(R.id.seekBar);
         mSeekBar.setOnSeekBarChangeListener(this);
 
-        if (mPlaybackProgressEvent != null) {
-            uiHandler.post(updatePlayer);
-        }
         mPlaybackEngine.registerPlaybackListener(this);
 
         return view;
@@ -111,46 +95,14 @@ public class PlayerFragment extends Fragment implements View.OnClickListener, Pl
                     mPlaybackEngine.resume();
                 }
             } catch (AudioEngineException ex) {
-
+                Log.e(TAG,  "Failed trying to play or pause.");
             }
         } else if (v.getId() == R.id.barBack) {
-            try {
-                int currChapterNumber = mPlaybackEngine.getCurrentChapter();
-                int currPartNumber = mPlaybackEngine.getCurrentPart();
-                Chapter prevChapter = null;
-                for (Chapter chapter : mContent.chapters) {
-                    if (chapter.chapter_number == currChapterNumber && chapter.part_number == currPartNumber) {
-                        int index = mContent.chapters.indexOf(chapter);
-                        prevChapter = mContent.chapters.get(index - 1);
-                    }
-                }
-                mPlaybackEngine.play(mAccountId, null, mContentId, prevChapter.part_number, prevChapter.chapter_number, 0);
-            } catch (AudioEngineException ex) {
-
-            }
-
+            mPlaybackEngine.previousChapter();
+            playButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_pause));
         } else if (v.getId() == R.id.barForward) {
-            try {
-                int currChapterNumber = mPlaybackEngine.getCurrentChapter();
-                int currPartNumber = mPlaybackEngine.getCurrentPart();
-                Chapter nextChapter = null;
-                for (Chapter chapter : mContent.chapters) {
-                    if (chapter.chapter_number == currChapterNumber && chapter.part_number == currPartNumber) {
-                        int index = mContent.chapters.indexOf(chapter);
-                        try {
-                            nextChapter = mContent.chapters.get(index + 1);
-                            mPlaybackEngine.play(mAccountId, null, mContentId, nextChapter.part_number, nextChapter.chapter_number, 0);
-                        }
-                        catch (Exception ex) {
-                            Toast.makeText(getActivity(), "This is the last chapter", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-
-
-            } catch (AudioEngineException ex) {
-
-            }
+            mPlaybackEngine.nextChapter();
+            playButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_pause));
         }
     }
 
@@ -176,17 +128,23 @@ public class PlayerFragment extends Fragment implements View.OnClickListener, Pl
     @Override
     public void update(PlaybackProgressEvent playbackProgressEvent) {
         Log.i(TAG, "Got playback progress event. Duration is " + playbackProgressEvent.duration + ", position is " + playbackProgressEvent.position);
-            mPlaybackProgressEvent = playbackProgressEvent;
-            uiHandler.post(updatePlayer);
+        mPlaybackProgressEvent = playbackProgressEvent;
+        uiHandler.post(updatePlayerProgress);
     }
 
-    private Runnable updatePlayer = new Runnable() {
+    private Runnable updatePlayerProgress = new Runnable() {
         public void run() {
             mTitle.setText(mPlaybackProgressEvent.content.title);
-            mChapter.setText(String.format("Chapter %1$d Part %2$d", mPlaybackProgressEvent.chapter.chapterNumber, mPlaybackProgressEvent.chapter.partNumber));
+            mChapter.setText(String.format(Locale.US, "Chapter %1$d Part %2$d", mPlaybackProgressEvent.chapter.chapterNumber, mPlaybackProgressEvent.chapter.partNumber));
             mSeekBar.setMax(mPlaybackProgressEvent.duration);
             mSeekBar.setProgress(mPlaybackProgressEvent.position);
-            mSeekBar.setSecondaryProgress(mPlaybackProgressEvent.duration * (mPlaybackProgressEvent.bufferedPercentage / 100));
+
+            Double bufferPercent = mPlaybackProgressEvent.bufferedPercentage.doubleValue() / 100;
+            Double buffer = mPlaybackProgressEvent.duration * bufferPercent;
+            Integer buff = buffer.intValue();
+
+            Log.i(TAG, buff.toString());
+            mSeekBar.setSecondaryProgress(buff);
             mDuration.setText(com.findaway.audioengine.mobile.util.ContentUtils.getTimeString(mPlaybackProgressEvent.duration));
             mPlayed.setText(com.findaway.audioengine.mobile.util.ContentUtils.getTimeString(mPlaybackProgressEvent.position));
         }
@@ -194,22 +152,12 @@ public class PlayerFragment extends Fragment implements View.OnClickListener, Pl
 
     @Override
     public void update(PlaybackEvent playbackEvent) {
-        mPlaybackEvent = playbackEvent;
-    }
-
-    @Override
-    public void setContent(Content content) {
-        mContent = content;
-    }
-
-    @Override
-    public void showError(String errorMessage) {
 
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        mPlaybackEngine.seekTo(mSeekTo);
+        mPlaybackEngine.seekTo(mProgress);
         mPlaybackEngine.registerPlaybackListener(this);
     }
 
@@ -220,6 +168,6 @@ public class PlayerFragment extends Fragment implements View.OnClickListener, Pl
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mSeekTo = progress;
+        mProgress = progress;
     }
 }

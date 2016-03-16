@@ -31,7 +31,7 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by agofman on 2/8/16.
  */
-public class DetailsFragment extends Fragment implements BookView, View.OnClickListener, PlaybackListener {
+public class DetailsFragment extends Fragment implements BookView, View.OnClickListener {
 
     static String TAG = "Details Fragment";
     private BookPresenter mBookPresenter;
@@ -98,7 +98,8 @@ public class DetailsFragment extends Fragment implements BookView, View.OnClickL
     @Override
     public void setContent(Content content) {
         mContent = content;
-        Picasso.with(getActivity()).load(getActivity().getResources().getString(R.string.MR_IMAGE_COVER_BASE) + mContent.id).into(cover);
+        Picasso.with(getActivity()).load(getActivity().getResources().getString(R.string.MR_IMAGE_COVER_BASE) + mContent.id +
+                getActivity().getResources().getString(R.string.MR_IMAGE_PARAM)).into(cover);
         title.setText(mContent.title);
         author.setText(mContent.author.get(0));
         description.setText(Html.fromHtml(mContent.description));
@@ -125,44 +126,13 @@ public class DetailsFragment extends Fragment implements BookView, View.OnClickL
         } else if (v.getId() == R.id.play) {
             if (playButton.getText().equals("Play")) {
                 mPlaybackEngine.play(mAccountId, null, mContentId, mContent.chapters.get(0).part_number, mContent.chapters.get(0).chapter_number, 0);
-                mPlaybackEngine.registerPlaybackListener(this);
                 mPlayerLayout.setVisibility(View.VISIBLE);
                 playButton.setText("Stop");
             } else if ( playButton.getText().equals("Stop")) {
                 mPlaybackEngine.stop();
-                mPlaybackEngine.unregisterPlaybackListener(this);
                 mPlayerLayout.setVisibility(View.GONE);
                 playButton.setText("Play");
             }
         }
-    }
-
-    @Override
-    public void error(PlaybackError playbackError) {
-        Log.e(TAG, "Playback failed: " + playbackError.message);
-
-        Log.e(TAG, "Playback failed: " + playbackError.code + " - " + playbackError.message);
-
-        if (playbackError.code.equals(PlaybackError.CONTENT_NOT_FOUND)) {
-            Toast.makeText(getActivity(), "Playback error: " + playbackError.code + " - Content not found.", Toast.LENGTH_SHORT).show();
-        } else if (playbackError.code.equals(PlaybackError.CHAPTER_NOT_FOUND)) {
-            Toast.makeText(getActivity(), "Playback error: " + playbackError.code + " - Chapter not found.", Toast.LENGTH_SHORT).show();
-        } else if (playbackError.code.equals(PlaybackError.UNAUTHORIZED)) {
-            Toast.makeText(getActivity(), "Playback error: " + playbackError.code + " - User does not have permission. Check credentials.", Toast.LENGTH_SHORT).show();
-        } else if (playbackError.code.equals(PlaybackError.FORBIDDEN)) {
-            Toast.makeText(getActivity(), "Playback error: " + playbackError.code + " - Account does not have permission.", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getActivity(), "Playback error: " + playbackError.code + " - Not curently handled in sample app.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void update(PlaybackProgressEvent playbackProgressEvent) {
-
-    }
-
-    @Override
-    public void update(PlaybackEvent playbackEvent) {
-
     }
 }
